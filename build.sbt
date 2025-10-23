@@ -1,7 +1,7 @@
 lazy val root = (project in file("."))
   .enablePlugins(GatlingPlugin)
   .settings(
-    name := "universal-credit-liability-performance-tests",
+    name := "senior-accounting-officer-performance-tests",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := "2.13.12",
     //implicitConversions & postfixOps are Gatling recommended -language settings
