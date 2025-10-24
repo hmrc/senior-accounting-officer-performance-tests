@@ -19,7 +19,7 @@ package uk.gov.hmrc.perftests.example
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.example.ExampleRequests._
 
-class ExampleSimulation extends PerformanceTestRunner {
+class RegistrationSimulation extends PerformanceTestRunner {
 
   setup("home-page", "Home Page") withRequests navigateToHomePage
 

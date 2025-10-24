@@ -21,7 +21,7 @@ import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
-object ExampleRequests extends ServicesConfiguration {
+object RegistrationRequests extends ServicesConfiguration {
 
   val baseUrl: String = baseUrlFor("example-frontend")
   val route: String   = "/check-your-vat-flat-rate"
