@@ -23,10 +23,25 @@ import uk.gov.hmrc.perftests.sao.Request_Helper._
 
 object RegistrationRequests {
 
-  val navigateToAuthStubPage: HttpRequestBuilder =
-    http("Navigate to Auth Stub Page")
+  def navigateToAuthStubPage: HttpRequestBuilder = http("Navigate to Auth Stub Page")
       .get(s"$authUrl")
       .check(status.is(200))
       .check(saveCsrfToken)
+
+  def submitAuthStub: HttpRequestBuilder = http("Submit Auth Stub")
+    .post(s"$authUrl")
+    .formParam("csrfToken", "${csrfToken}")
+    .formParam("debugCsrfToken", "csrfToken")
+    .formParam("redirectionUrl", s"$baseUrl$baseRoute/registration")
+    .formParam("credentialStrength", "strong")
+    .formParam("confidenceLevel", "50")
+    .formParam("authorityId", "12345")
+    .formParam("affinityGroup", "Individual")
+    .formParam("email", "user@test.com")
+    .formParam("credentialRole", "User")
+    .check(status.is(303))
+    .check(header("Location").is(s"$baseUrl$baseRoute/registration"))
+
+
 
 }

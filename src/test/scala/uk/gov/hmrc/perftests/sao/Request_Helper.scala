@@ -26,7 +26,7 @@ object Request_Helper extends ServicesConfiguration{
 
   val authUrl: String = baseUrlFor("auth-login-stub") + "/auth-login-stub/gg-sign-in"
   val baseUrl: String = baseUrlFor("senior-accounting-officer-registration-frontend")
-  val baseRoute: String = "/senior-accounting-officer/registration"
+  val baseRoute: String = "/senior-accounting-officer"
 
   def saveCsrfToken: HttpCheck = css("input[name=csrfToken]", "value").saveAs("csrfToken")
 }

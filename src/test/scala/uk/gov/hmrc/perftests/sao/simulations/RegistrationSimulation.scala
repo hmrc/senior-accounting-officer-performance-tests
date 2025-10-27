@@ -21,7 +21,13 @@ import uk.gov.hmrc.perftests.sao.requests.RegistrationRequests._
 
 class RegistrationSimulation extends PerformanceTestRunner {
 
-  setup("register-your-company-page", "Register Page") withRequests navigateToAuthStubPage
+
+
+  setup("register-your-company-page", "Register Page") withRequests (
+    navigateToAuthStubPage,
+    submitAuthStub)
+
+
 
   runSimulation()
 }
