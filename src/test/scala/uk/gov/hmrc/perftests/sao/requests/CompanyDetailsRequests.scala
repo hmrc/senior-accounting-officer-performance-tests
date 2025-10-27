@@ -21,27 +21,27 @@ import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.perftests.sao.Request_Helper._
 
-object RegistrationRequests {
+object CompanyDetailsRequests {
 
-  def navigateToAuthStubPage: HttpRequestBuilder = http("Navigate to Auth Stub Page")
-      .get(s"$authUrl")
-      .check(status.is(200))
-      .check(saveCsrfToken)
+  private val pageUrl: String = baseUrl + "/registration/business-match"
+  private val companyStubUrl: String = baseUrl + "/registration/test-only/grs-stub/"
 
-  def submitAuthStub: HttpRequestBuilder = http("Submit Auth Stub")
-    .post(s"$authUrl")
-    .formParam("csrfToken", "${csrfToken}")
-    .formParam("debugCsrfToken", "csrfToken")
-    .formParam("redirectionUrl", s"$baseUrl$baseRoute/registration")
-    .formParam("credentialStrength", "strong")
-    .formParam("confidenceLevel", "50")
-    .formParam("authorityId", "12345")
-    .formParam("affinityGroup", "Individual")
-    .formParam("email", "user@test.com")
-    .formParam("credentialRole", "User")
+  def navigateToCompanyStubPage: HttpRequestBuilder = http("Navigate to Company Details Stub Response Page")
+    .get(s"$pageUrl")
+    .header("Cookie", authCookie)
     .check(status.is(303))
-    .check(header("Location").is(s"$baseUrl$baseRoute/registration"))
+    .check(header("Location").transform(_.contains(s"$companyStubUrl")).is(true))
+    .check(header("Location").saveAs("redirectUrl"))
 
 
+  def submitStubResponse: HttpRequestBuilder = http("Submit Company Details Stub Response")
+    .post("${redirectUrl}")
+    .formParam("csrfToken", "${csrfToken}")
+    .check(status.is(303))
+    .check(bodyString.transformOption { body =>
+      println("POST response body:\n" + body)
+      Some(body)
+    })
+    .check(header("Location").saveAs("redirectUrl"))
 
 }
