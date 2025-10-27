@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.example
+package uk.gov.hmrc.perftests.sao.requests
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.performance.conf.ServicesConfiguration
+import uk.gov.hmrc.perftests.sao.Request_Helper._
 
-object RegistrationRequests extends ServicesConfiguration {
-
-  val baseUrl: String = baseUrlFor("auth-login-stub")
-  val route: String   = "/auth-login-stub/gg-sign-in"
+object RegistrationRequests {
 
   val navigateToAuthStubPage: HttpRequestBuilder =
     http("Navigate to Auth Stub Page")
-      .get(s"$baseUrl$route")
+      .get(s"$authUrl")
       .check(status.is(200))
-      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
+      .check(saveCsrfToken)
 
 }
