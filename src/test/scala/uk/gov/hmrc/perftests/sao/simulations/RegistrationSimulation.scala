@@ -17,17 +17,21 @@
 package uk.gov.hmrc.perftests.sao.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.sao.requests.RegistrationRequests._
+import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests._
+import uk.gov.hmrc.perftests.sao.requests.CompanyDetailsRequests._
 
 class RegistrationSimulation extends PerformanceTestRunner {
 
-
-
-  setup("register-your-company-page", "Register Page") withRequests (
+  setup("register-your-company-page", "Register Your Company With GRS Stub") withRequests (
+//    navigateToGrsToggle,
+//    toggleGrsOff,
     navigateToAuthStubPage,
-    submitAuthStub)
-
-
+    submitAuthStub,
+    navigateToRegistrationPage,
+    navigateToCompanyStubPage,
+    submitStubResponse,
+    navigateToRegistrationPage
+  )
 
   runSimulation()
 }
