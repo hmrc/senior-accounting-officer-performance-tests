@@ -23,32 +23,18 @@ import uk.gov.hmrc.perftests.sao.Request_Helper._
 
 object AuthLoginRequests {
 
-  private val redirectUrl: String = baseUrl + "/registration"
-
-  def navigateToGrsToggle: HttpRequestBuilder = http("Navigate to GRS Toggle")
-    .get("http://localhost:10057/senior-accounting-officer/registration/test-only/feature-toggle")
-    .check(status.is(200))
-    .check(saveCsrfToken)
-
-  def toggleGrsOff: HttpRequestBuilder = http("Toggle GRS Off")
-    .post("http://localhost:10057/senior-accounting-officer/registration/test-only/feature-toggle")
-    .formParam("csrfToken", "${csrfToken}")
-//    .check(bodyString.transformOption{ body =>
-//      println("POST response body:|n" + body)
-//      Some(body)
-//    })
-    .check(status.is(200))
-//    .check(headerRegex("Set-Cookie", """mdtp=(.*)""").saveAs("mdtpCookie"))
-
+  private val pageUrl: String = s"$authBaseUrl/auth-login-stub/gg-sign-in"
+  val redirectUrl: String = s"$baseUrl/senior-accounting-officer/registration"
 
   def navigateToAuthStubPage: HttpRequestBuilder = http("Navigate to Auth Stub Page")
-    .get(s"$authUrl")
+    .get(s"$pageUrl")
     .check(status.is(200))
     .check(saveCsrfToken)
 
-  def submitAuthStub: HttpRequestBuilder = http("Submit Auth Stub")
-    .post(s"$authUrl")
-    .formParam("csrfToken", "${csrfToken}")
+  def submitAuthStub: HttpRequestBuilder = {
+    http("Submit Auth Stub")
+    .post(s"$pageUrl")
+    .formParam("csrfToken", "#{csrfToken}")
     .formParam("redirectionUrl", s"$redirectUrl")
     .formParam("credentialStrength", "strong")
     .formParam("confidenceLevel", "50")
@@ -59,13 +45,6 @@ object AuthLoginRequests {
     .check(status.is(303))
     .check(header("Location").is(s"$redirectUrl"))
     .check(headerRegex("Set-Cookie", """mdtp=(.*)""").saveAs("mdtpCookie"))
+  }
 
-  def navigateToRegistrationPage: HttpRequestBuilder = http("Registration Page")
-    .get(redirectUrl)
-    .header("Cookie", authCookie)
-    .check(status.is(200))
-    .check(bodyString.transformOption { body =>
-      println("POST response body:\n" + body)
-      Some(body)
-    })
 }

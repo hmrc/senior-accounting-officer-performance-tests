@@ -20,28 +20,47 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.perftests.sao.Request_Helper._
+import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests.redirectUrl
 
 object CompanyDetailsRequests {
 
-  private val pageUrl: String = baseUrl + "/registration/business-match"
-  private val companyStubUrl: String = baseUrl + "/registration/test-only/grs-stub/"
+  private val pageUrl: String = s"$redirectUrl/business-match"
+  private val companyDetailsUrl: String = s"$companyBaseUrl/identify-your-incorporated-business/"
 
-  def navigateToCompanyStubPage: HttpRequestBuilder = http("Navigate to Company Details Stub Response Page")
+
+  def navigateToRegistrationPage: HttpRequestBuilder = http("Registration Page")
+    .get(redirectUrl)
+    .header("Cookie", authCookie)
+    .check(status.is(200))
+
+  def navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to Company Details")
     .get(s"$pageUrl")
     .header("Cookie", authCookie)
     .check(status.is(303))
-    .check(header("Location").transform(_.contains(s"$companyStubUrl")).is(true))
-    .check(header("Location").saveAs("redirectUrl"))
+    .check(header("Location").transform(_.contains(s"$companyDetailsUrl")).is(true))
+    .check(header("Location").transform(_.replaceAll("/[^/]*$", "")).saveAs("companyNumberUrl"))
+
+  def getCRNPage: HttpRequestBuilder = http("Get CRN Page")
+    .get("${companyNumberUrl}")
+    .header("Cookie", authCookie)
+    .check(status.is(200))
+    .check(saveCsrfToken)
 
 
-  def submitStubResponse: HttpRequestBuilder = http("Submit Company Details Stub Response")
-    .post("${redirectUrl}")
-    .formParam("csrfToken", "${csrfToken}")
+  def submitCRN: HttpRequestBuilder = http("Submit Customer Registration Number")
+    .post("${companyNumberUrl}/company-number")
+    .formParam("companyName", "A1B2C3")
+    .formParam("csrfToken", "#{csrfToken}")
     .check(status.is(303))
-    .check(bodyString.transformOption { body =>
-      println("POST response body:\n" + body)
-      Some(body)
-    })
-    .check(header("Location").saveAs("redirectUrl"))
+    //    .check(header("Location").is("${companyNumberUrl}/confirm-business-name"))
+
+
+
+  def getBusinessNamePage: HttpRequestBuilder = http("Get Business Name Page")
+    .get("${companyNumberUrl}/confirm-business-name")
+    .header("Cookie", authCookie)
+    .check(status.is(200))
+    .check(saveCsrfToken)
+
 
 }

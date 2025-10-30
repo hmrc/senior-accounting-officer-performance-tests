@@ -20,17 +20,19 @@ import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests._
 import uk.gov.hmrc.perftests.sao.requests.CompanyDetailsRequests._
 
-class RegistrationSimulation extends PerformanceTestRunner {
+class RegistrationSimulation extends PerformanceTestRunner  {
 
-  setup("register-your-company-page", "Register Your Company With GRS Stub") withRequests (
-//    navigateToGrsToggle,
-//    toggleGrsOff,
+  setup("auth-stub-login", "Login to Auth Stub").withRequests (
     navigateToAuthStubPage,
-    submitAuthStub,
+    submitAuthStub
+  )
+
+  setup("register-your-company", "Registration Page").withRequests(
     navigateToRegistrationPage,
-    navigateToCompanyStubPage,
-    submitStubResponse,
-    navigateToRegistrationPage
+    navigateToCompanyDetails,
+    getCRNPage,
+    submitCRN,
+    //    getBusinessNamePage
   )
 
   runSimulation()
