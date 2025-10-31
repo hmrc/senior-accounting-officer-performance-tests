@@ -28,16 +28,16 @@ object AuthLoginRequests {
 
   val navigateToAuthStubPage: HttpRequestBuilder =
     http("Navigate to Auth Stub Page")
-      .get(s"$pageUrl")
+      .get(pageUrl)
       .check(status.is(200))
       .check(CsrfHelper.saveCsrfToken("authCsrfToken"))
 
   val submitAuthStub: HttpRequestBuilder =
     http("Submit Auth Stub")
-      .post(s"$pageUrl")
+      .post(pageUrl)
       .disableFollowRedirect
       .formParam("csrfToken", "${authCsrfToken}")
-      .formParam("redirectionUrl", s"$redirectUrl")
+      .formParam("redirectionUrl", redirectUrl)
       .formParam("credentialStrength", "strong")
       .formParam("confidenceLevel", "50")
       .formParam("authorityId", "12345")
@@ -45,7 +45,7 @@ object AuthLoginRequests {
       .formParam("email", "user@test.com")
       .formParam("credentialRole", "User")
       .check(status.is(303))
-      .check(header("Location").is(s"$redirectUrl"))
+      .check(header("Location").is(redirectUrl))
       .check(header("Location").saveAs("redirectUrl"))
       .check(headerRegex("Set-Cookie", """mdtp=(.*)""").saveAs("mdtpCookie"))
 

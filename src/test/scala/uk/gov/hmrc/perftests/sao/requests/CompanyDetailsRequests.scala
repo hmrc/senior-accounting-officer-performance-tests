@@ -24,7 +24,7 @@ import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests.redirectUrl
 
 object CompanyDetailsRequests {
 
-  private val pageUrl: String           = s"$redirectUrl/business-match"
+  private val pageUrl: String = s"$redirectUrl/business-match"
   private val companyDetailsUrl: String = s"$companyBaseUrl/identify-your-incorporated-business/"
 
   val navigateToRegistrationPage: HttpRequestBuilder = http("Registration Page")
@@ -33,10 +33,10 @@ object CompanyDetailsRequests {
     .check(status.is(200))
 
   val navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to Company Details")
-    .get(s"$pageUrl")
+    .get(pageUrl)
     .header("Cookie", authCookie)
     .check(status.is(303))
-    .check(header("Location").transform(_.contains(s"$companyDetailsUrl")).is(true))
+    .check(header("Location").transform(_.contains(companyDetailsUrl)).is(true))
     .check(header("Location").saveAs("redirectUrl"))
 
   val getCRNPage: HttpRequestBuilder = http("Get Company Registration Number Page")
@@ -53,11 +53,5 @@ object CompanyDetailsRequests {
 //    .formParam("continue", " Continue ")
     .check(status.is(303))
     .check(header("Location").saveAs("redirectUrl"))
-
-//  val getBusinessNamePage: HttpRequestBuilder = http("Get Business Name Page")
-//    .get("${companyNumberUrl}/confirm-business-name")
-//    .header("Cookie", authCookie)
-//    .check(status.is(200))
-//    .check(saveCsrfToken)
 
 }
