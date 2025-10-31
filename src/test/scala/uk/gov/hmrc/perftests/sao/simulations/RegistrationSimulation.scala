@@ -17,22 +17,27 @@
 package uk.gov.hmrc.perftests.sao.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
+import uk.gov.hmrc.perftests.sao.Request_Helper._
+import uk.gov.hmrc.perftests.sao.Request_Helper.requests._
 import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests._
 import uk.gov.hmrc.perftests.sao.requests.CompanyDetailsRequests._
 
-class RegistrationSimulation extends PerformanceTestRunner  {
+class RegistrationSimulation extends PerformanceTestRunner {
 
-  setup("auth-stub-login", "Login to Auth Stub").withRequests (
+  setup("auth-stub-login", "Login to Auth Stub").withChainedActions(
     navigateToAuthStubPage,
-    submitAuthStub
+    submitAuthStub,
+    saveRedirect
   )
 
-  setup("register-your-company", "Registration Page").withRequests(
+  setup("register-your-company", "Registration Page").withChainedActions(
     navigateToRegistrationPage,
     navigateToCompanyDetails,
+    saveRedirect,
     getCRNPage,
+    sessionDebugBefore,
     submitCRN,
-    //    getBusinessNamePage
+    sessionDebugAfter
   )
 
   runSimulation()

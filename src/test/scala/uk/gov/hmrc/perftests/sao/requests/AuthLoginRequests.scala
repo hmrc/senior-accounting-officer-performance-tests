@@ -24,27 +24,29 @@ import uk.gov.hmrc.perftests.sao.Request_Helper._
 object AuthLoginRequests {
 
   private val pageUrl: String = s"$authBaseUrl/auth-login-stub/gg-sign-in"
-  val redirectUrl: String = s"$baseUrl/senior-accounting-officer/registration"
+  val redirectUrl: String     = s"$baseUrl/senior-accounting-officer/registration"
 
-  def navigateToAuthStubPage: HttpRequestBuilder = http("Navigate to Auth Stub Page")
-    .get(s"$pageUrl")
-    .check(status.is(200))
-    .check(saveCsrfToken)
+  val navigateToAuthStubPage: HttpRequestBuilder =
+    http("Navigate to Auth Stub Page")
+      .get(s"$pageUrl")
+      .check(status.is(200))
+      .check(CsrfHelper.saveCsrfToken("authCsrfToken"))
 
-  def submitAuthStub: HttpRequestBuilder = {
+  val submitAuthStub: HttpRequestBuilder =
     http("Submit Auth Stub")
-    .post(s"$pageUrl")
-    .formParam("csrfToken", "#{csrfToken}")
-    .formParam("redirectionUrl", s"$redirectUrl")
-    .formParam("credentialStrength", "strong")
-    .formParam("confidenceLevel", "50")
-    .formParam("authorityId", "12345")
-    .formParam("affinityGroup", "Individual")
-    .formParam("email", "user@test.com")
-    .formParam("credentialRole", "User")
-    .check(status.is(303))
-    .check(header("Location").is(s"$redirectUrl"))
-    .check(headerRegex("Set-Cookie", """mdtp=(.*)""").saveAs("mdtpCookie"))
-  }
+      .post(s"$pageUrl")
+      .disableFollowRedirect
+      .formParam("csrfToken", "${authCsrfToken}")
+      .formParam("redirectionUrl", s"$redirectUrl")
+      .formParam("credentialStrength", "strong")
+      .formParam("confidenceLevel", "50")
+      .formParam("authorityId", "12345")
+      .formParam("affinityGroup", "Individual")
+      .formParam("email", "user@test.com")
+      .formParam("credentialRole", "User")
+      .check(status.is(303))
+      .check(header("Location").is(s"$redirectUrl"))
+      .check(header("Location").saveAs("redirectUrl"))
+      .check(headerRegex("Set-Cookie", """mdtp=(.*)""").saveAs("mdtpCookie"))
 
 }

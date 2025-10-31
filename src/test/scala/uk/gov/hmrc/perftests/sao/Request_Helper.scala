@@ -15,19 +15,79 @@
  */
 
 package uk.gov.hmrc.perftests.sao
-import io.gatling.http.Predef._
 import io.gatling.core.Predef._
-import io.gatling.http.check.HttpCheck
-import uk.gov.hmrc.performance.conf.ServicesConfiguration
+import io.gatling.core.action.builder.ActionBuilder
+import io.gatling.core.structure.ChainBuilder
+import io.gatling.http.request.builder.HttpRequestBuilder
+import uk.gov.hmrc.performance.conf.{Configuration, ServicesConfiguration}
+import uk.gov.hmrc.performance.simulation.JourneyPart
 
-object Request_Helper extends ServicesConfiguration{
+import java.util.concurrent.ConcurrentHashMap
 
-  val authBaseUrl: String = baseUrlFor("auth-login-stub")
+object Request_Helper extends ServicesConfiguration {
+
+  val authBaseUrl: String    = baseUrlFor("auth-login-stub")
   val companyBaseUrl: String = baseUrlFor("incorporated-entity-identification-frontend")
-  val baseUrl: String = baseUrlFor("senior-accounting-officer-registration-frontend")
+  val baseUrl: String        = baseUrlFor("senior-accounting-officer-registration-frontend")
 
-  private val csrfPattern = """<input type="hidden" name="csrfToken" value="([^"]+)""""
-  val saveCsrfToken: HttpCheck = regex(csrfPattern).saveAs("csrfToken")
-  val authCookie: String       = "mdtp=${mdtpCookie}"
+  val authCookie: String = "mdtp=${mdtpCookie}"
+
+  object CsrfHelper {
+    def saveCsrfToken(sessionToken: String = "csrfToken") =
+      regex("""name="csrfToken" value="([^"]+)""").saveAs(sessionToken)
+
+    def logCsrf(sessionToken: String) = exec { session: Session =>
+      println(s"$sessionToken = " + session(sessionToken).asOption[String].getOrElse("NOT FOUND"))
+      session
+    }
+  }
+
+  object TokenStore {
+    private val tokens                         = new ConcurrentHashMap[Long, String]()
+    def set(userId: Long, token: String): Unit = tokens.put(userId, token)
+    def get(userId: Long): Option[String]      = Option(tokens.get(userId))
+  }
+
+  object RedirectStore {
+    private val redirects                              = new ConcurrentHashMap[String, String]()
+    def set(userId: String, redirectUrl: String): Unit = redirects.put(userId, redirectUrl)
+    def get(userId: String): Option[String]            = Option(redirects.get(userId))
+  }
+
+  def bearerHeader(userId: Int): Map[String, String] =
+    TokenStore.get(userId).map(token => Map("Authorisation" -> s"Bearer $token")).getOrElse(Map.empty)
+
+  def fullRedirectUrl(user: String): String = RedirectStore.get(user).getOrElse("/")
+
+  val saveRedirect = exec { session =>
+    val user     = "testUser"
+    val redirect = session("redirectUrl").as[String]
+    RedirectStore.set(user, redirect)
+    session.set("redirectUrl", redirect)
+  }
+
+  val sessionDebugBefore = exec { session =>
+    println("Session ID before POST: " + session.userId)
+    session
+  }
+
+  val sessionDebugAfter = exec { session =>
+    println("Session ID after POST: " + session.userId)
+    session
+  }
+
+  object requests extends Configuration {
+
+    implicit def convertChainToActions(chain: ChainBuilder): Seq[ActionBuilder] = chain.actionBuilders
+
+    implicit def convertHttpActionToSeq(act: HttpRequestBuilder): Seq[ActionBuilder] = Seq(act)
+
+    implicit def convertActionToSeq(act: ActionBuilder): Seq[ActionBuilder] = Seq(act)
+
+    implicit class AugmentJourneyParts(j: JourneyPart) {
+      def withChainedActions(builders: Seq[ActionBuilder]*): JourneyPart = j.withActions(builders.flatten: _*)
+    }
+
+  }
 
 }

@@ -24,43 +24,40 @@ import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests.redirectUrl
 
 object CompanyDetailsRequests {
 
-  private val pageUrl: String = s"$redirectUrl/business-match"
+  private val pageUrl: String           = s"$redirectUrl/business-match"
   private val companyDetailsUrl: String = s"$companyBaseUrl/identify-your-incorporated-business/"
 
-
-  def navigateToRegistrationPage: HttpRequestBuilder = http("Registration Page")
-    .get(redirectUrl)
+  val navigateToRegistrationPage: HttpRequestBuilder = http("Registration Page")
+    .get(session => session("redirectUrl").as[String])
     .header("Cookie", authCookie)
     .check(status.is(200))
 
-  def navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to Company Details")
+  val navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to Company Details")
     .get(s"$pageUrl")
     .header("Cookie", authCookie)
     .check(status.is(303))
     .check(header("Location").transform(_.contains(s"$companyDetailsUrl")).is(true))
-    .check(header("Location").transform(_.replaceAll("/[^/]*$", "")).saveAs("companyNumberUrl"))
+    .check(header("Location").saveAs("redirectUrl"))
 
-  def getCRNPage: HttpRequestBuilder = http("Get CRN Page")
-    .get("${companyNumberUrl}")
+  val getCRNPage: HttpRequestBuilder = http("Get Company Registration Number Page")
+    .get(session => session("redirectUrl").as[String])
     .header("Cookie", authCookie)
     .check(status.is(200))
-    .check(saveCsrfToken)
+    .check(css("form", "action").saveAs("crnPostUrl"))
+    .check(CsrfHelper.saveCsrfToken("crnCsrfToken"))
 
-
-  def submitCRN: HttpRequestBuilder = http("Submit Customer Registration Number")
-    .post("${companyNumberUrl}/company-number")
-    .formParam("companyName", "A1B2C3")
-    .formParam("csrfToken", "#{csrfToken}")
+  val submitCRN: HttpRequestBuilder = http("Submit Company Registration Number")
+    .post(session => companyBaseUrl + session("crnPostUrl").as[String])
+    .formParam("companyNumber", "A1B2C3")
+    .formParam("csrfToken", "${crnCsrfToken}")
+//    .formParam("continue", " Continue ")
     .check(status.is(303))
-    //    .check(header("Location").is("${companyNumberUrl}/confirm-business-name"))
+    .check(header("Location").saveAs("redirectUrl"))
 
-
-
-  def getBusinessNamePage: HttpRequestBuilder = http("Get Business Name Page")
-    .get("${companyNumberUrl}/confirm-business-name")
-    .header("Cookie", authCookie)
-    .check(status.is(200))
-    .check(saveCsrfToken)
-
+//  val getBusinessNamePage: HttpRequestBuilder = http("Get Business Name Page")
+//    .get("${companyNumberUrl}/confirm-business-name")
+//    .header("Cookie", authCookie)
+//    .check(status.is(200))
+//    .check(saveCsrfToken)
 
 }
