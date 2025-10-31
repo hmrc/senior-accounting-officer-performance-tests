@@ -30,7 +30,7 @@ class RegistrationSimulation extends PerformanceTestRunner {
     saveRedirect
   )
 
-  setup("register-your-company", "Registration Page").withChainedActions(
+  setup("register-your-company", "Company Registration").withChainedActions(
     navigateToRegistrationPage,
     navigateToCompanyDetails,
     saveRedirect,
