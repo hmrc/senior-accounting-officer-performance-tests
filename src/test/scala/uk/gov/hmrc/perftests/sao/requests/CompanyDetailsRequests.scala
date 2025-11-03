@@ -19,7 +19,7 @@ package uk.gov.hmrc.perftests.sao.requests
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.sao.Request_Helper._
+import uk.gov.hmrc.perftests.sao.support.RequestSupport._
 import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests.redirectUrl
 
 object CompanyDetailsRequests {
@@ -27,12 +27,12 @@ object CompanyDetailsRequests {
   private val pageUrl: String = s"$redirectUrl/business-match"
   private val companyDetailsUrl: String = s"$companyBaseUrl/identify-your-incorporated-business/"
 
-  val navigateToRegistrationPage: HttpRequestBuilder = http("Registration Page")
+  val navigateToRegistrationPage: HttpRequestBuilder = http("Navigate to the registration page")
     .get(session => session("redirectUrl").as[String])
     .header("Cookie", authCookie)
     .check(status.is(200))
 
-  val navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to Company Details")
+  val navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to the company details page")
     .get(pageUrl)
     .header("Cookie", authCookie)
     .disableFollowRedirect
@@ -40,7 +40,7 @@ object CompanyDetailsRequests {
     .check(header("Location").transform(_.contains(companyDetailsUrl)).is(true))
     .check(header("Location").saveAs("redirectUrl"))
 
-  val getCRNPage: HttpRequestBuilder = http("Get Company Registration Number Page")
+  val getCRNPage: HttpRequestBuilder = http("Get the customer registration number (CRN) page")
     .get(session => session("redirectUrl").as[String])
     .header("Cookie", authCookie)
     .check(status.is(200))
@@ -48,7 +48,7 @@ object CompanyDetailsRequests {
     .check(CsrfHelper.saveCsrfToken("crnCsrfToken"))
     .check(css("form", "action").saveAs("postUrl"))
 
-  val submitCRN: HttpRequestBuilder = http("Submit Company Registration Number")
+  val submitCRN: HttpRequestBuilder = http("Submit customer registration number (CRN)")
     .post(session => companyBaseUrl + session("postUrl").as[String])
     .formParam("companyNumber", "A1B2C3")
     .formParam("csrfToken", session => session("crnCsrfToken").as[String])

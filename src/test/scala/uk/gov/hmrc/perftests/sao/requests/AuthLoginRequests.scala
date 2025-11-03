@@ -19,7 +19,7 @@ package uk.gov.hmrc.perftests.sao.requests
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.sao.Request_Helper._
+import uk.gov.hmrc.perftests.sao.support.RequestSupport._
 
 object AuthLoginRequests {
 

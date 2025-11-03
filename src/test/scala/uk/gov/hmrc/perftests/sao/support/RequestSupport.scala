@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.sao
+package uk.gov.hmrc.perftests.sao.support
+
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.core.structure.ChainBuilder
@@ -24,7 +25,7 @@ import uk.gov.hmrc.performance.simulation.JourneyPart
 
 import java.util.concurrent.ConcurrentHashMap
 
-object Request_Helper extends ServicesConfiguration {
+object RequestSupport extends ServicesConfiguration {
 
   val authBaseUrl: String    = baseUrlFor("auth-login-stub")
   val companyBaseUrl: String = baseUrlFor("incorporated-entity-identification-frontend")

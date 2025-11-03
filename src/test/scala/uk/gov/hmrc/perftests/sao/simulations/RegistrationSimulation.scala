@@ -17,8 +17,8 @@
 package uk.gov.hmrc.perftests.sao.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.sao.Request_Helper._
-import uk.gov.hmrc.perftests.sao.Request_Helper.requests._
+import uk.gov.hmrc.perftests.sao.support.RequestSupport._
+import uk.gov.hmrc.perftests.sao.support.RequestSupport.requests._
 import uk.gov.hmrc.perftests.sao.requests.AuthLoginRequests._
 import uk.gov.hmrc.perftests.sao.requests.CompanyDetailsRequests._
 
