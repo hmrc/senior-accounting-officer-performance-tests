@@ -42,20 +42,11 @@ object Request_Helper extends ServicesConfiguration {
     }
   }
 
-  object TokenStore {
-    private val tokens                         = new ConcurrentHashMap[Long, String]()
-    def set(userId: Long, token: String): Unit = tokens.put(userId, token)
-    def get(userId: Long): Option[String]      = Option(tokens.get(userId))
-  }
-
   object RedirectStore {
     private val redirects                              = new ConcurrentHashMap[String, String]()
     def set(userId: String, redirectUrl: String): Unit = redirects.put(userId, redirectUrl)
     def get(userId: String): Option[String]            = Option(redirects.get(userId))
   }
-
-  def bearerHeader(userId: Int): Map[String, String] =
-    TokenStore.get(userId).map(token => Map("Authorisation" -> s"Bearer $token")).getOrElse(Map.empty)
 
   def fullRedirectUrl(user: String): String = RedirectStore.get(user).getOrElse("/")
 
@@ -73,6 +64,15 @@ object Request_Helper extends ServicesConfiguration {
 
   val sessionDebugAfter = exec { session =>
     println("Session ID after POST: " + session.userId)
+    session
+  }
+
+  val logSessionInfo = exec { session =>
+    println("--- Session Debug ---")
+    println("Session: " + session)
+    println("Session ID: " + session.userId)
+    println("CSRF Token: " + session("crnCsrfToken").asOption[String])
+    println("POST URL: " + session("postUrl").asOption[String])
     session
   }
 

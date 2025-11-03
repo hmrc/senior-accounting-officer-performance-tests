@@ -35,9 +35,7 @@ class RegistrationSimulation extends PerformanceTestRunner {
     navigateToCompanyDetails,
     saveRedirect,
     getCRNPage,
-    sessionDebugBefore,
     submitCRN,
-    sessionDebugAfter
   )
 
   runSimulation()

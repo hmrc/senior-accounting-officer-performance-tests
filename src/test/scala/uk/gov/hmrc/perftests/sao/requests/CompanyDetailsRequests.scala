@@ -35,6 +35,7 @@ object CompanyDetailsRequests {
   val navigateToCompanyDetails: HttpRequestBuilder = http("Navigate to Company Details")
     .get(pageUrl)
     .header("Cookie", authCookie)
+    .disableFollowRedirect
     .check(status.is(303))
     .check(header("Location").transform(_.contains(companyDetailsUrl)).is(true))
     .check(header("Location").saveAs("redirectUrl"))
@@ -43,15 +44,17 @@ object CompanyDetailsRequests {
     .get(session => session("redirectUrl").as[String])
     .header("Cookie", authCookie)
     .check(status.is(200))
-    .check(css("form", "action").saveAs("crnPostUrl"))
+    .check(bodyString.saveAs("responseBody"))
     .check(CsrfHelper.saveCsrfToken("crnCsrfToken"))
+    .check(css("form", "action").saveAs("postUrl"))
 
   val submitCRN: HttpRequestBuilder = http("Submit Company Registration Number")
-    .post(session => companyBaseUrl + session("crnPostUrl").as[String])
+    .post(session => companyBaseUrl + session("postUrl").as[String])
     .formParam("companyNumber", "A1B2C3")
-    .formParam("csrfToken", "${crnCsrfToken}")
-//    .formParam("continue", " Continue ")
+    .formParam("csrfToken", session => session("crnCsrfToken").as[String])
     .check(status.is(303))
     .check(header("Location").saveAs("redirectUrl"))
+
+
 
 }
