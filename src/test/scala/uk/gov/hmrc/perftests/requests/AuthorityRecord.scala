@@ -25,7 +25,6 @@ import uk.gov.hmrc.perftests.support.RequestSupport.{authBaseUrl, baseUrl, saveC
 object AuthorityRecord {
 
   private val pageUrl: String = s"$authBaseUrl/auth-login-stub/gg-sign-in"
-//private val pageUrl: String = s"$authBaseUrl/auth-login-stub/beta-gg-sign-in"
   val redirectUrl: String     = s"$baseUrl/senior-accounting-officer/registration"
 
   def getAuthorityWizardPage: Seq[ActionBuilder] = convertHttpActionToSeq(
