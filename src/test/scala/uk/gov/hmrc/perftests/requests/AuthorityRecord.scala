@@ -14,33 +14,36 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.sao.requests
+package uk.gov.hmrc.perftests.requests
 
 import io.gatling.core.Predef._
+import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef._
-import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.sao.support.RequestSupport._
+import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
+import uk.gov.hmrc.perftests.support.RequestSupport.{authBaseUrl, baseUrl, saveCsrfToken}
 
-object AuthLoginRequests {
+object AuthorityRecord {
 
   private val pageUrl: String = s"$authBaseUrl/auth-login-stub/gg-sign-in"
+//private val pageUrl: String = s"$authBaseUrl/auth-login-stub/beta-gg-sign-in"
   val redirectUrl: String     = s"$baseUrl/senior-accounting-officer/registration"
 
-  val navigateToAuthStubPage: HttpRequestBuilder =
-    http("Navigate to Auth Stub Page")
+  def getAuthorityWizardPage: Seq[ActionBuilder] = convertHttpActionToSeq(
+    http("Navigate to the 'Authority Wizard' page")
       .get(pageUrl)
       .check(status.is(200))
-      .check(CsrfHelper.saveCsrfToken("authCsrfToken"))
+      .check(saveCsrfToken("authCsrfToken"))
+  )
 
-  val submitAuthStub: HttpRequestBuilder =
-    http("Submit Auth Stub")
+  def submitNewAuthorityRecord: Seq[ActionBuilder] = convertHttpActionToSeq(
+    http("Submit form to create a new authority record")
       .post(pageUrl)
       .disableFollowRedirect
       .formParam("csrfToken", "${authCsrfToken}")
+      .formParam("authorityId", "12345")
       .formParam("redirectionUrl", redirectUrl)
       .formParam("credentialStrength", "strong")
       .formParam("confidenceLevel", "50")
-      .formParam("authorityId", "12345")
       .formParam("affinityGroup", "Individual")
       .formParam("email", "user@test.com")
       .formParam("credentialRole", "User")
@@ -48,5 +51,6 @@ object AuthLoginRequests {
       .check(header("Location").is(redirectUrl))
       .check(header("Location").saveAs("redirectUrl"))
       .check(headerRegex("Set-Cookie", """mdtp=(.*)""").saveAs("mdtpCookie"))
-
+      .check(headerRegex("Set-Cookie", """mdtpdi=(.*)""").saveAs("mdtpdiCookie"))
+  )
 }
