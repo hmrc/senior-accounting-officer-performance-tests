@@ -19,7 +19,8 @@ package uk.gov.hmrc.perftests.support
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.core.check.CheckBuilder
-import io.gatling.core.check.regex.{RegexCheckType, RegexOfType}
+import io.gatling.core.check.regex.RegexCheckType
+import io.gatling.http.Predef.currentLocation
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertChainToActions
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
@@ -30,14 +31,8 @@ object RequestSupport extends ServicesConfiguration {
   val mdtpCookie: String     = "mdtp=${mdtpCookie}"
   val mdtpdiCookie: String   = "mdtpdi=${mdtpdiCookie}"
 
-  def saveCsrfToken(tokenKey: String = "csrfToken"): CheckBuilder.Final[RegexCheckType, String] =
-    extractCsrfFromNameAttribute("csrfToken").saveAs(tokenKey)
-
-  def extractCsrfFromNameAttribute(
-    name: String
-  ): CheckBuilder.MultipleFind[RegexCheckType, String, String] with RegexOfType = regex(
-    s"""name="$name" value="([^"]+)"""
-  )
+  def extractAndSaveCsrfToken(): CheckBuilder.Final[RegexCheckType, String] =
+    regex(s"""name="csrfToken" value="([^"]+)""").saveAs("csrfToken")
 
   def saveRedirect: Seq[ActionBuilder] = convertChainToActions(
     exec { session =>
@@ -47,4 +42,26 @@ object RequestSupport extends ServicesConfiguration {
       session.set("redirectUrl", redirect)
     }
   )
+
+  // REMOVE THIS METHOD WHEN TICKET IS READY FOR REVIEW
+  def logSessionInfo: Seq[ActionBuilder] = convertChainToActions(exec { session =>
+    println("========================================================================")
+    println("DEBUG LOG")
+    println("========================================================================")
+    println("Request URL: " + session("Request URL").asOption[String])
+    println("CSRF Token: " + session("csrfToken").asOption[String])
+    println("BASE URL: " + session(s"$baseUrl").asOption[String])
+    println("POST URL: " + session("postUrl").asOption[String])
+    println("REDIRECT_URL: " + session("redirectUrl").asOption[String])
+    println("CURRENT URL: " + session("currentUrl").asOption[String])
+    println("MDTP Cookie: " + session("mdtpCookie").asOption[String])
+    println("MDTPDI Cookie: " + session("mdtpdiCookie").asOption[String])
+
+    println("BODY: " + session("responseBody").asOption[String])
+
+    println("========================================================================")
+    println("========================================================================")
+    session
+  })
+
 }

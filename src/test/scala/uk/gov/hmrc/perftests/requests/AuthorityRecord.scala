@@ -20,7 +20,7 @@ import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef._
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
-import uk.gov.hmrc.perftests.support.RequestSupport.{authBaseUrl, baseUrl, saveCsrfToken}
+import uk.gov.hmrc.perftests.support.RequestSupport.{authBaseUrl, baseUrl, extractAndSaveCsrfToken}
 
 object AuthorityRecord {
 
@@ -31,14 +31,14 @@ object AuthorityRecord {
     http("Navigate to the 'Authority Wizard' page")
       .get(pageUrl)
       .check(status.is(200))
-      .check(saveCsrfToken("authCsrfToken"))
+      .check(extractAndSaveCsrfToken())
   )
 
   def submitNewAuthorityRecord: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Submit form to create a new authority record")
       .post(pageUrl)
       .disableFollowRedirect
-      .formParam("csrfToken", "${authCsrfToken}")
+      .formParam("csrfToken", "${csrfToken}")
       .formParam("authorityId", "12345")
       .formParam("redirectionUrl", redirectUrl)
       .formParam("credentialStrength", "strong")

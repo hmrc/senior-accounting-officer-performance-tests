@@ -18,9 +18,9 @@ package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityRecord.{getAuthorityWizardPage, submitNewAuthorityRecord}
-import uk.gov.hmrc.perftests.requests.Registration.{getCRNPage, getGenericRegistrationServiceStub, getRegistrationPage, submitCRN}
+import uk.gov.hmrc.perftests.requests.Registration.{continueToAddFirstContactEmail, continueToAddMoreContactsQuestionPage, continueToAddSecondContact, continueToAddSecondContactEmail, continueToCheckYourAnswersForBothContacts, continueToCheckYourAnswersForContact, continueToMissingFirstContactEmailErrorPage, continueToMissingFirstContactNameErrorPage, continueToMissingSecondContactEmailErrorPage, continueToMissingSecondContactNameErrorPage, continueToProvideFirstContactDetails, getAddFirstContactEmailPage, getAddFirstContactNamePage, getAddMoreContactsQuestionPage, getAddSecondContactEmailPage, getAddSecondContactNamePage, getCheckYourAnswersPage, getCheckYourAnswersPageForBothContacts, getContactDetailsPage, getGenericRegistrationServiceStubAfterRedirect, getGenericRegistrationServiceStubBeforeRedirect, getInterimRedirectToRegistrationPage, getRegistrationPage, getRegistrationPageWithCompleteCompanyDetails, sendResponseWithCompanyDetailsBeforeRedirect}
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
-import uk.gov.hmrc.perftests.support.RequestSupport.saveRedirect
+import uk.gov.hmrc.perftests.support.RequestSupport.{logSessionInfo, saveRedirect}
 
 class Simulation extends PerformanceTestRunner {
 
@@ -31,13 +31,35 @@ class Simulation extends PerformanceTestRunner {
       saveRedirect
     )
 
-  setup("register-company-for-service", "Company registration")
+  setup("register-company-for-service", "Registration")
     .withChainedActions(
       getRegistrationPage,
-      getGenericRegistrationServiceStub,
+      getGenericRegistrationServiceStubBeforeRedirect,
       saveRedirect,
-      getCRNPage,
-      submitCRN
+      getGenericRegistrationServiceStubAfterRedirect,
+      sendResponseWithCompanyDetailsBeforeRedirect,
+      getInterimRedirectToRegistrationPage,
+      getRegistrationPageWithCompleteCompanyDetails,
+      getContactDetailsPage,
+      continueToProvideFirstContactDetails,
+      getAddFirstContactNamePage,
+      continueToMissingFirstContactNameErrorPage,
+      continueToAddFirstContactEmail,
+      getAddFirstContactEmailPage,
+      continueToMissingFirstContactEmailErrorPage,
+      continueToAddMoreContactsQuestionPage,
+      getAddMoreContactsQuestionPage,
+      continueToCheckYourAnswersForContact,
+      getCheckYourAnswersPage,
+      continueToAddSecondContact,
+      getAddSecondContactNamePage,
+      continueToMissingSecondContactNameErrorPage,
+      continueToAddSecondContactEmail,
+      getAddSecondContactEmailPage,
+      continueToMissingSecondContactEmailErrorPage,
+      continueToCheckYourAnswersForBothContacts,
+      logSessionInfo,
+      getCheckYourAnswersPageForBothContacts
     )
 
   runSimulation()
