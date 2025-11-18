@@ -19,17 +19,25 @@ package uk.gov.hmrc.perftests.support
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.core.check.CheckBuilder
+import io.gatling.core.check.css.CssCheckType
 import io.gatling.core.check.regex.RegexCheckType
-import io.gatling.http.Predef.currentLocation
+import jodd.lagarto.dom.NodeSelector
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertChainToActions
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object RequestSupport extends ServicesConfiguration {
-  val authBaseUrl: String    = baseUrlFor("auth-login-stub")
-  val companyBaseUrl: String = baseUrlFor("incorporated-entity-identification-frontend")
-  val baseUrl: String        = baseUrlFor("senior-accounting-officer-registration-frontend")
-  val mdtpCookie: String     = "mdtp=${mdtpCookie}"
-  val mdtpdiCookie: String   = "mdtpdi=${mdtpdiCookie}"
+  val authBaseUrl: String                 = baseUrlFor("auth-login-stub")
+  val companyBaseUrl: String              = baseUrlFor("incorporated-entity-identification-frontend")
+  val baseUrl: String                     = baseUrlFor("senior-accounting-officer-registration-frontend")
+  val registrationPage: String            = s"$baseUrl/senior-accounting-officer/registration"
+  val contactDetailsPage: String          = s"$registrationPage/contact-details"
+  val changeFirstContactNameUrl: String   = s"$contactDetailsPage/first/change-name"
+  val changeFirstContactEmailUrl: String  = s"$contactDetailsPage/first/change-email"
+  val changeSecondContactNameUrl: String  = s"$contactDetailsPage/second/change-name"
+  val changeSecondContactEmailUrl: String = s"$contactDetailsPage/second/change-email"
+  val checkYourAnswersPage: String        = s"$contactDetailsPage/check-your-answers"
+  val mdtpCookie: String                  = "mdtp=${mdtpCookie}"
+  val mdtpdiCookie: String                = "mdtpdi=${mdtpdiCookie}"
 
   def extractAndSaveCsrfToken(): CheckBuilder.Final[RegexCheckType, String] =
     regex(s"""name="csrfToken" value="([^"]+)""").saveAs("csrfToken")
@@ -43,25 +51,19 @@ object RequestSupport extends ServicesConfiguration {
     }
   )
 
-  // REMOVE THIS METHOD WHEN TICKET IS READY FOR REVIEW
-  def logSessionInfo: Seq[ActionBuilder] = convertChainToActions(exec { session =>
-    println("========================================================================")
-    println("DEBUG LOG")
-    println("========================================================================")
-    println("Request URL: " + session("Request URL").asOption[String])
-    println("CSRF Token: " + session("csrfToken").asOption[String])
-    println("BASE URL: " + session(s"$baseUrl").asOption[String])
-    println("POST URL: " + session("postUrl").asOption[String])
-    println("REDIRECT_URL: " + session("redirectUrl").asOption[String])
-    println("CURRENT URL: " + session("currentUrl").asOption[String])
-    println("MDTP Cookie: " + session("mdtpCookie").asOption[String])
-    println("MDTPDI Cookie: " + session("mdtpdiCookie").asOption[String])
+  def currentRequestUrl(session: Session): String =
+    session("requestUrl").as[String]
 
-    println("BODY: " + session("responseBody").asOption[String])
+  def currentRedirectUrl(session: Session): String =
+    s"$baseUrl${session("redirectUrl").as[String]}"
 
-    println("========================================================================")
-    println("========================================================================")
-    session
-  })
-
+  def assertAllValuesPresentInSelector(
+    selector: String,
+    expectedValues: Set[String]
+  ): CheckBuilder.Final[CssCheckType, NodeSelector] = css(selector).findAll
+    .transform { values =>
+      val trimmed = values.map(_.trim)
+      expectedValues.subsetOf(trimmed.toSet) // return 'true' if all value found
+    }
+    .is(true)
 }

@@ -28,7 +28,7 @@ object AuthorityRecord {
   val redirectUrl: String     = s"$baseUrl/senior-accounting-officer/registration"
 
   def getAuthorityWizardPage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to the 'Authority Wizard' page")
+    http("Navigate to 'Authority Wizard' page")
       .get(pageUrl)
       .check(status.is(200))
       .check(extractAndSaveCsrfToken())

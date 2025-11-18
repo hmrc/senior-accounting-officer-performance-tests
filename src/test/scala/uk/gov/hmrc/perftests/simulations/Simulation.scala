@@ -18,9 +18,9 @@ package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityRecord.{getAuthorityWizardPage, submitNewAuthorityRecord}
-import uk.gov.hmrc.perftests.requests.Registration.{continueToAddFirstContactEmail, continueToAddMoreContactsQuestionPage, continueToAddSecondContact, continueToAddSecondContactEmail, continueToCheckYourAnswersForBothContacts, continueToCheckYourAnswersForContact, continueToMissingFirstContactEmailErrorPage, continueToMissingFirstContactNameErrorPage, continueToMissingSecondContactEmailErrorPage, continueToMissingSecondContactNameErrorPage, continueToProvideFirstContactDetails, getAddFirstContactEmailPage, getAddFirstContactNamePage, getAddMoreContactsQuestionPage, getAddSecondContactEmailPage, getAddSecondContactNamePage, getCheckYourAnswersPage, getCheckYourAnswersPageForBothContacts, getContactDetailsPage, getGenericRegistrationServiceStubAfterRedirect, getGenericRegistrationServiceStubBeforeRedirect, getInterimRedirectToRegistrationPage, getRegistrationPage, getRegistrationPageWithCompleteCompanyDetails, sendResponseWithCompanyDetailsBeforeRedirect}
+import uk.gov.hmrc.perftests.requests.Registration.{continueToAddFirstContactEmail, continueToAddMoreContactsQuestionPage, continueToAddSecondContact, continueToAddSecondContactEmail, continueToCheckYourAnswersForContact, continueToCheckYourAnswersForFirstContactEmailChange, continueToCheckYourAnswersForFirstContactNameChange, continueToCheckYourAnswersForSecondContactEmailChange, continueToCheckYourAnswersForSecondContactNameChange, continueToProvideFirstContactDetails, continueToSaveAndSubmitRegistration, continueToSubmitRegistration, getAddFirstContactEmailPage, getAddFirstContactNamePage, getAddMoreContactsQuestionPage, getAddSecondContactEmailPage, getAddSecondContactNamePage, getChangeFirstContactEmailPage, getChangeFirstContactNamePage, getChangeSecondContactEmailPage, getChangeSecondContactNamePage, getCheckYourAnswersPage, getCheckYourAnswersPageShowingBothContacts, getContactDetailsPage, getGenericRegistrationServiceStubAfterRedirect, getGenericRegistrationServiceStubBeforeRedirect, getInterimRedirectToRegistrationPage, getRegistrationCompletePage, getRegistrationPage, getRegistrationPageAfterSaving, getRegistrationPageWithCompleteCompanyDetails, sendResponseWithCompanyDetailsBeforeRedirect}
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
-import uk.gov.hmrc.perftests.support.RequestSupport.{logSessionInfo, saveRedirect}
+import uk.gov.hmrc.perftests.support.RequestSupport.saveRedirect
 
 class Simulation extends PerformanceTestRunner {
 
@@ -43,23 +43,29 @@ class Simulation extends PerformanceTestRunner {
       getContactDetailsPage,
       continueToProvideFirstContactDetails,
       getAddFirstContactNamePage,
-      continueToMissingFirstContactNameErrorPage,
       continueToAddFirstContactEmail,
       getAddFirstContactEmailPage,
-      continueToMissingFirstContactEmailErrorPage,
       continueToAddMoreContactsQuestionPage,
       getAddMoreContactsQuestionPage,
       continueToCheckYourAnswersForContact,
+      getChangeFirstContactNamePage,
+      continueToCheckYourAnswersForFirstContactNameChange,
+      getChangeFirstContactEmailPage,
+      continueToCheckYourAnswersForFirstContactEmailChange,
       getCheckYourAnswersPage,
       continueToAddSecondContact,
       getAddSecondContactNamePage,
-      continueToMissingSecondContactNameErrorPage,
       continueToAddSecondContactEmail,
       getAddSecondContactEmailPage,
-      continueToMissingSecondContactEmailErrorPage,
-      continueToCheckYourAnswersForBothContacts,
-      logSessionInfo,
-      getCheckYourAnswersPageForBothContacts
+      getChangeSecondContactNamePage,
+      continueToCheckYourAnswersForSecondContactNameChange,
+      getChangeSecondContactEmailPage,
+      continueToCheckYourAnswersForSecondContactEmailChange,
+      getCheckYourAnswersPageShowingBothContacts,
+      continueToSaveAndSubmitRegistration,
+      getRegistrationPageAfterSaving,
+      continueToSubmitRegistration,
+      getRegistrationCompletePage
     )
 
   runSimulation()
