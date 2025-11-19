@@ -17,53 +17,48 @@
 package uk.gov.hmrc.perftests.support
 
 import io.gatling.core.Predef._
-import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.core.check.CheckBuilder
 import io.gatling.core.check.css.CssCheckType
-import io.gatling.core.check.regex.RegexCheckType
 import jodd.lagarto.dom.NodeSelector
-import uk.gov.hmrc.perftests.support.GatlingSupport.convertChainToActions
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object RequestSupport extends ServicesConfiguration {
   val authBaseUrl: String                 = baseUrlFor("auth-login-stub")
   val companyBaseUrl: String              = baseUrlFor("incorporated-entity-identification-frontend")
   val baseUrl: String                     = baseUrlFor("senior-accounting-officer-registration-frontend")
-  val registrationPage: String            = s"$baseUrl/senior-accounting-officer/registration"
-  val contactDetailsPage: String          = s"$registrationPage/contact-details"
-  val changeFirstContactNameUrl: String   = s"$contactDetailsPage/first/change-name"
-  val changeFirstContactEmailUrl: String  = s"$contactDetailsPage/first/change-email"
-  val changeSecondContactNameUrl: String  = s"$contactDetailsPage/second/change-name"
-  val changeSecondContactEmailUrl: String = s"$contactDetailsPage/second/change-email"
-  val checkYourAnswersPage: String        = s"$contactDetailsPage/check-your-answers"
+  val authorityWizardPageUrl: String      = s"$authBaseUrl/auth-login-stub/gg-sign-in"
+  val registrationPageUrl: String         = s"$baseUrl/senior-accounting-officer/registration"
+  val businessMatchUrl: String            = s"$registrationPageUrl/business-match"
+  val contactDetailsPageUrl: String       = s"$registrationPageUrl/contact-details"
+  val changeFirstContactNameUrl: String   = s"$contactDetailsPageUrl/first/change-name"
+  val changeFirstContactEmailUrl: String  = s"$contactDetailsPageUrl/first/change-email"
+  val changeSecondContactNameUrl: String  = s"$contactDetailsPageUrl/second/change-name"
+  val changeSecondContactEmailUrl: String = s"$contactDetailsPageUrl/second/change-email"
+  val checkYourAnswersUrl: String         = s"$contactDetailsPageUrl/check-your-answers"
   val mdtpCookie: String                  = "mdtp=${mdtpCookie}"
   val mdtpdiCookie: String                = "mdtpdi=${mdtpdiCookie}"
 
-  def extractAndSaveCsrfToken(): CheckBuilder.Final[RegexCheckType, String] =
-    regex(s"""name="csrfToken" value="([^"]+)""").saveAs("csrfToken")
-
-  def saveRedirect: Seq[ActionBuilder] = convertChainToActions(
-    exec { session =>
-      val user     = "testUser"
-      val redirect = session("redirectUrl").as[String]
-      RedirectStore.set(user, redirect)
-      session.set("redirectUrl", redirect)
-    }
-  )
+  def extractAndSaveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
+    css("input[name=csrfToken]", "value").exists.saveAs("csrfToken")
 
   def currentRequestUrl(session: Session): String =
     session("requestUrl").as[String]
 
-  def currentRedirectUrl(session: Session): String =
-    s"$baseUrl${session("redirectUrl").as[String]}"
+  def currentRedirectUrl(session: Session): String = {
+    val redirectUrl = session("redirectUrl").as[String]
+    if (redirectUrl.startsWith("http")) {
+      redirectUrl
+    } else s"$baseUrl$redirectUrl"
+  }
+
+  def areAllContactsAddedUrl(session: Session): String =
+    session("areAllContactsAddedUrl").as[String]
 
   def assertAllValuesPresentInSelector(
     selector: String,
     expectedValues: Set[String]
   ): CheckBuilder.Final[CssCheckType, NodeSelector] = css(selector).findAll
-    .transform { values =>
-      val trimmed = values.map(_.trim)
-      expectedValues.subsetOf(trimmed.toSet) // return 'true' if all value found
-    }
-    .is(true)
+    .transform(_.map(_.trim).toSet)
+    .is(expectedValues)
+
 }

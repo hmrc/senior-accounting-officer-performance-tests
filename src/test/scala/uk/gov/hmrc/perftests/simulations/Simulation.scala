@@ -20,22 +20,19 @@ import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityRecord.{getAuthorityWizardPage, submitNewAuthorityRecord}
 import uk.gov.hmrc.perftests.requests.Registration.{continueToAddFirstContactEmail, continueToAddMoreContactsQuestionPage, continueToAddSecondContact, continueToAddSecondContactEmail, continueToCheckYourAnswersForContact, continueToCheckYourAnswersForFirstContactEmailChange, continueToCheckYourAnswersForFirstContactNameChange, continueToCheckYourAnswersForSecondContactEmailChange, continueToCheckYourAnswersForSecondContactNameChange, continueToProvideFirstContactDetails, continueToSaveAndSubmitRegistration, continueToSubmitRegistration, getAddFirstContactEmailPage, getAddFirstContactNamePage, getAddMoreContactsQuestionPage, getAddSecondContactEmailPage, getAddSecondContactNamePage, getChangeFirstContactEmailPage, getChangeFirstContactNamePage, getChangeSecondContactEmailPage, getChangeSecondContactNamePage, getCheckYourAnswersPage, getCheckYourAnswersPageShowingBothContacts, getContactDetailsPage, getGenericRegistrationServiceStubAfterRedirect, getGenericRegistrationServiceStubBeforeRedirect, getInterimRedirectToRegistrationPage, getRegistrationCompletePage, getRegistrationPage, getRegistrationPageAfterSaving, getRegistrationPageWithCompleteCompanyDetails, sendResponseWithCompanyDetailsBeforeRedirect}
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
-import uk.gov.hmrc.perftests.support.RequestSupport.saveRedirect
 
 class Simulation extends PerformanceTestRunner {
 
   setup("create-authority-record", "Submit new authority record")
     .withChainedActions(
       getAuthorityWizardPage,
-      submitNewAuthorityRecord,
-      saveRedirect
+      submitNewAuthorityRecord
     )
 
   setup("register-company-for-service", "Registration")
     .withChainedActions(
       getRegistrationPage,
       getGenericRegistrationServiceStubBeforeRedirect,
-      saveRedirect,
       getGenericRegistrationServiceStubAfterRedirect,
       sendResponseWithCompanyDetailsBeforeRedirect,
       getInterimRedirectToRegistrationPage,
