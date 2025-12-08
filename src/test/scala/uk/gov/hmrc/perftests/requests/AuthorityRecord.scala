@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,38 +19,37 @@ package uk.gov.hmrc.perftests.requests
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef._
-import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
-import uk.gov.hmrc.perftests.support.RequestSupport.{authorityWizardPageUrl, extractAndSaveCsrfToken, registrationPageUrl}
+import uk.gov.hmrc.perftests.support.GatlingSupport._
+import uk.gov.hmrc.perftests.support.RequestSupport._
+import uk.gov.hmrc.perftests.support.TestDataSupport._
+import uk.gov.hmrc.perftests.support.adt.{AffinityGroup, ConfidenceLevel, CredentialStrength, Role}
 
 object AuthorityRecord {
 
   def getAuthorityWizardPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'Authority Wizard' page")
       .get(authorityWizardPageUrl)
+      .queryParam("continue", registrationPageUrl)
       .check(status.is(200))
-      .check(extractAndSaveCsrfToken())
+      .check(saveCsrfToken())
   )
 
   def submitNewAuthorityRecord: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Submit form to create a new authority record")
       .post(authorityWizardPageUrl)
       .disableFollowRedirect
-      .formParam("csrfToken", session => session("csrfToken").asOption[String])
-      .formParam("authorityId", "12345")
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam("authorityId", _ => randomAuthorityId)
       .formParam("redirectionUrl", registrationPageUrl)
-      .formParam("credentialStrength", "strong")
-      .formParam("confidenceLevel", "50")
-      .formParam("affinityGroup", "Individual")
-      .formParam("email", "user@test.com")
-      .formParam("credentialRole", "User")
+      .formParam(CredentialStrength.fieldName, CredentialStrength.Strong.value)
+      .formParam(ConfidenceLevel.fieldName, ConfidenceLevel.Medium.value)
+      .formParam(AffinityGroup.fieldName, _ => randomAffinityGroup)
+      .formParam("email", _ => randomTestEmail)
+      .formParam(Role.fieldName, Role.User.value)
       .check(status.is(303))
       .check(
-        header("Location").is(registrationPageUrl),
-        header("Location").saveAs("redirectUrl")
-      )
-      .check(
-        headerRegex("Set-Cookie", "mdtp=(.*)").saveAs("mdtpCookie"),
-        headerRegex("Set-Cookie", "mdtpdi=(.*)").saveAs("mdtpdiCookie")
+        header(HttpHeaderNames.Location).is(registrationPageUrl),
+        header(HttpHeaderNames.Location).saveAs(redirectUrlKey)
       )
   )
 }

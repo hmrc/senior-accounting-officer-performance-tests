@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityRecord.{getAuthorityWizardPage, submitNewAuthorityRecord}
-import uk.gov.hmrc.perftests.requests.Registration.{continueToAddFirstContactEmail, continueToAddMoreContactsQuestionPage, continueToAddSecondContact, continueToAddSecondContactEmail, continueToCheckYourAnswersForContact, continueToCheckYourAnswersForFirstContactEmailChange, continueToCheckYourAnswersForFirstContactNameChange, continueToCheckYourAnswersForSecondContactEmailChange, continueToCheckYourAnswersForSecondContactNameChange, continueToProvideFirstContactDetails, continueToSaveAndSubmitRegistration, continueToSubmitRegistration, getAddFirstContactEmailPage, getAddFirstContactNamePage, getAddMoreContactsQuestionPage, getAddSecondContactEmailPage, getAddSecondContactNamePage, getChangeFirstContactEmailPage, getChangeFirstContactNamePage, getChangeSecondContactEmailPage, getChangeSecondContactNamePage, getCheckYourAnswersPage, getCheckYourAnswersPageShowingBothContacts, getContactDetailsPage, getGenericRegistrationServiceStubAfterRedirect, getGenericRegistrationServiceStubBeforeRedirect, getInterimRedirectToRegistrationPage, getRegistrationCompletePage, getRegistrationPage, getRegistrationPageAfterSaving, getRegistrationPageWithCompleteCompanyDetails, sendResponseWithCompanyDetailsBeforeRedirect}
+import uk.gov.hmrc.perftests.requests.Registration._
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
+import uk.gov.hmrc.perftests.support.TestDataSupport.resetUserDefinedSessionData
 
 class Simulation extends PerformanceTestRunner {
 
@@ -63,6 +64,11 @@ class Simulation extends PerformanceTestRunner {
       getRegistrationPageAfterSaving,
       continueToSubmitRegistration,
       getRegistrationCompletePage
+    )
+
+  setup("reset-user-defined-session-data", "Reset user defined session data")
+    .withChainedActions(
+      resetUserDefinedSessionData.actionBuilders
     )
 
   runSimulation()

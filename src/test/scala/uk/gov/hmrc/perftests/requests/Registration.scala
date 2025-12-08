@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,155 +18,149 @@ package uk.gov.hmrc.perftests.requests
 
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.http.Predef._
+import io.gatling.http.Predef.{headerRegex, _}
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
-import uk.gov.hmrc.perftests.support.RequestSupport.{areAllContactsAddedUrl, assertAllValuesPresentInSelector, businessMatchUrl, changeFirstContactEmailUrl, changeFirstContactNameUrl, changeSecondContactEmailUrl, changeSecondContactNameUrl, checkYourAnswersUrl, contactDetailsPageUrl, currentRedirectUrl, currentRequestUrl, extractAndSaveCsrfToken, mdtpCookie, registrationPageUrl}
+import uk.gov.hmrc.perftests.support.RequestSupport._
 
 object Registration {
+  private val valueKey: String                  = "value"
+  private val amendedFirstContactName: String   = "amendedFirstContactName"
+  private val amendedFirstContactEmail: String  = "amendedEmail@1st-Contact.com"
+  private val amendedSecondContactName: String  = "amendedSecondContactName"
+  private val amendedSecondContactEmail: String = "amendedEmail@2nd-Contact.com"
 
   def getRegistrationPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'registration' page")
       .get(registrationPageUrl)
-      .header("Cookie", mdtpCookie)
       .check(status.is(200))
   )
 
-  def getGenericRegistrationServiceStubBeforeRedirect: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Initial request (before redirect) to access 'enter company details' page (stub)")
-      .get(businessMatchUrl)
-      .header("Cookie", mdtpCookie)
-      .disableFollowRedirect
-      .check(status.is(303))
-      .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains(registrationPageUrl)).is(true)
-      )
-      .check(
-        headerRegex("Set-Cookie", "mdtp=(.*)").exists.saveAs("mdtpCookie"),
-        headerRegex("Set-Cookie", "mdtpdi=(.*)").exists.saveAs("mdtpdiCookie")
-      )
-  )
+  def getGenericRegistrationServiceStubBeforeRedirect: Seq[ActionBuilder] =
+    convertHttpActionToSeq(
+      http("Initial request (before redirect) to access 'enter company details' page (stub)")
+        .get(businessMatchUrl)
+        .disableFollowRedirect
+        .check(status.is(303))
+        .check(
+          header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+          header(HttpHeaderNames.Location).transform(_.contains(baseGrsStubUrl)).is(true),
+          headerRegex(HttpHeaderNames.Location, journeyIdRegexPattern).saveAs(journeyIdKey)
+        )
+    )
 
   def getGenericRegistrationServiceStubAfterRedirect: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Request to access 'enter company details' page (stub)")
-      .get(session => currentRedirectUrl(session))
-      .header("Cookie", mdtpCookie)
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(bodyString.saveAs("responseBody"))
-      .check(extractAndSaveCsrfToken())
+      .check(saveCsrfToken())
   )
 
   def sendResponseWithCompanyDetailsBeforeRedirect: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Send stub response with company details (initial call before redirect)")
-      .post(session => currentRedirectUrl(session))
+      .post(session => redirectUrlFromSession(session))
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains(registrationPageUrl)).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(session => businessMatchWithJourneyIdUrl(session))
       )
   )
 
   def getInterimRedirectToRegistrationPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Interim call to 'registration' page with completed company details")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
+      .formParam(journeyIdKey, session => journeyIdFromSession(session))
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(location => registrationPageUrl.contains(location)).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(registrationPageUrl))
       )
   )
 
   def getRegistrationPageWithCompleteCompanyDetails: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'registration' page with completed company details")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(currentLocation.transform(_.contains(registrationPageUrl)).is(true))
   )
 
   def getContactDetailsPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'provide contact details' page")
       .get(contactDetailsPageUrl)
       .check(status.is(200))
-      .check(extractAndSaveCsrfToken())
-      .check(
-        headerRegex("Set-Cookie", "mdtp=(.*)").saveAs("mdtpCookie"),
-        headerRegex("Set-Cookie", "mdtpdi=(.*)").saveAs("mdtpdiCookie")
-      )
-      .check(currentLocation.saveAs("currentUrl"))
+      .check(saveCsrfToken())
   )
 
   def continueToProvideFirstContactDetails: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to add 1st contact details (call before redirect)")
       .post(contactDetailsPageUrl)
-      .formParam("csrfToken", session => session("csrfToken").as[String])
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("first/name")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(addFirstContactNameUrl))
       )
   )
 
   def getAddFirstContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'add 1st contact name' page")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(currentLocation.saveAs("requestUrl"))
+      .check(saveCsrfToken())
   )
 
   def continueToAddFirstContactEmail: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'add 1st contact email' page (call before redirect)")
-      .post(session => currentRequestUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "ATestNameForFirstContact")
+      .post(addFirstContactNameUrl)
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, "ATestNameForFirstContact")
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("first/email")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(addFirstContactEmailUrl))
       )
   )
 
   def getAddFirstContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'add 1st contact email' page")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(css(".govuk-caption-m").find.transform(_.trim.toLowerCase).is("first contact details"))
-      .check(currentLocation.saveAs("requestUrl"))
+      .check(saveCsrfToken())
   )
 
   def continueToAddMoreContactsQuestionPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'add more contacts' question page (call before redirect)")
-      .post(session => currentRequestUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "aTestEmailForFirstContact@tester.co.uk")
+      .post(addFirstContactEmailUrl)
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, "aTestEmailForFirstContact@tester.co.uk")
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("first/add-another")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(addAnotherContactPageUrl))
       )
   )
 
   def getAddMoreContactsQuestionPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'add more contacts' question page")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(currentLocation.saveAs("areAllContactsAddedUrl"))
+      .check(saveCsrfToken())
   )
 
   def continueToCheckYourAnswersForContact: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page (call before redirect)")
-      .post(session => areAllContactsAddedUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "yes")
+      .post(addAnotherContactPageUrl)
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, "yes")
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("contact-details/check-your-answers")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
       )
   )
 
@@ -174,18 +168,19 @@ object Registration {
     http("Navigate to 'change first contact name' page")
       .get(changeFirstContactNameUrl)
       .check(status.is(200))
+      .check(saveCsrfToken())
   )
 
   def continueToCheckYourAnswersForFirstContactNameChange: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page after 1st contact name change (call before redirect)")
       .post(changeFirstContactNameUrl)
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "amendedFirstContactName")
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, amendedFirstContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists,
-        header("Location").transform(_.contains("contact-details/check-your-answers")).is(true)
+        header(HttpHeaderNames.Location).exists,
+        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
       )
   )
 
@@ -193,67 +188,66 @@ object Registration {
     http("Navigate to 'change first contact email' page")
       .get(changeFirstContactEmailUrl)
       .check(status.is(200))
+      .check(saveCsrfToken())
   )
 
   def continueToCheckYourAnswersForFirstContactEmailChange: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page after 1st contact email change (call before redirect)")
       .post(changeFirstContactEmailUrl)
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "amendedEmail@1st-Contact.com")
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, amendedFirstContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists,
-        header("Location").transform(_.contains("contact-details/check-your-answers")).is(true)
+        header(HttpHeaderNames.Location).exists,
+        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
       )
   )
 
   def getCheckYourAnswersPage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to the 'Check your answers' page")
+    http("Navigate to 'check your answers' page")
       .get(checkYourAnswersUrl)
       .check(status.is(200))
-      .check(css(".govuk-heading-s").find.transform(_.trim.toLowerCase).is("first contact details"))
+      .check(saveCsrfToken())
   )
 
   def continueToAddSecondContact: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to add 2nd contact details (call before redirect)")
-      .post(session => areAllContactsAddedUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "no")
+      .post(addAnotherContactPageUrl)
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, "no")
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("second/name")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(addSecondContactNameUrl))
       )
   )
 
   def getAddSecondContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'add 2nd contact name' page")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(css(".govuk-caption-m").find.transform(_.trim.toLowerCase).is("second contact details"))
-      .check(currentLocation.saveAs("requestUrl"))
+      .check(saveCsrfToken())
   )
 
   def continueToAddSecondContactEmail: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'add 2nd contact email' page (call before redirect)")
-      .post(session => currentRequestUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "ATestNameForSecondContact")
+      .post(addSecondContactNameUrl)
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, "TestNameForSecondContact")
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("second/email")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(addSecondContactEmailUrl))
       )
   )
 
   def getAddSecondContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'add 2nd contact email' page")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(css(".govuk-caption-m").find.transform(_.trim.toLowerCase).is("second contact details"))
   )
 
   def getChangeSecondContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
@@ -265,13 +259,13 @@ object Registration {
   def continueToCheckYourAnswersForSecondContactNameChange: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page after 2nd contact name change (call before redirect)")
       .post(changeSecondContactNameUrl)
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "amendedSecondContactName")
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, amendedSecondContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists,
-        header("Location").transform(_.contains("contact-details/check-your-answers")).is(true)
+        header(HttpHeaderNames.Location).exists,
+        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
       )
   )
 
@@ -284,13 +278,13 @@ object Registration {
   def continueToCheckYourAnswersForSecondContactEmailChange: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page after 2nd contact email change (call before redirect)")
       .post(changeSecondContactEmailUrl)
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("value", "amendedEmail@2nd-Contact.com")
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam(valueKey, amendedSecondContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("contact-details/check-your-answers")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
       )
   )
 
@@ -298,14 +292,15 @@ object Registration {
     http("Navigate to 'check your answers' page to view both contacts")
       .get(checkYourAnswersUrl)
       .check(status.is(200))
+      .check(saveCsrfToken())
       .check(
-        assertAllValuesPresentInSelector(
-          ".govuk-summary-list__value",
+        assertAllValuesPresentInSelector( // Not sure whether to keep this check
+          ".govuk-summary-list__" + valueKey,
           Set(
-            "amendedFirstContactName",
-            "amendedEmail@1st-Contact.com",
-            "amendedSecondContactName",
-            "amendedEmail@2nd-Contact.com"
+            amendedFirstContactName,
+            amendedFirstContactEmail,
+            amendedSecondContactName,
+            amendedSecondContactEmail
           )
         )
       )
@@ -313,25 +308,26 @@ object Registration {
 
   def continueToSaveAndSubmitRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to save registration (call before redirect)")
-      .post(session => currentRedirectUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
-      .formParam("contacts[0].name", "amendedFirstContactName")
-      .formParam("contacts[0].email", "amendedEmail@1st-Contact.com")
-      .formParam("contacts[1].name", "amendedSecondContactName")
-      .formParam("contacts[1].email", "amendedEmail@2nd-Contact.com")
+      .post(session => redirectUrlFromSession(session))
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam("contacts[0].name", amendedFirstContactName)
+      .formParam("contacts[0].email", amendedFirstContactEmail)
+      .formParam("contacts[1].name", amendedSecondContactName)
+      .formParam("contacts[1].email", amendedSecondContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location").transform(_.contains("/senior-accounting-officer/registration")).is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(registrationPageUrl))
       )
   )
 
   def getRegistrationPageAfterSaving: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'registration' page following save and submission'")
-      .get(session => currentRedirectUrl(session))
+      .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
-      .check(
+      .check(saveCsrfToken())
+      .check( // Not sure whether to keep this check/request
         css("#company-details-status").find.transform(_.trim).is("Completed"),
         css("#contacts-details-status").find.transform(_.trim).is("Completed")
       )
@@ -339,23 +335,22 @@ object Registration {
 
   def continueToSubmitRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'registration complete' page (call before redirect)")
-      .post(session => currentRedirectUrl(session))
-      .formParam("csrfToken", session => session("csrfToken").as[String])
+      .post(session => redirectUrlFromSession(session))
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
       .disableFollowRedirect
       .check(status.is(303))
       .check(
-        header("Location").exists.saveAs("redirectUrl"),
-        header("Location")
-          .transform(_.contains("/senior-accounting-officer/registration/registration-complete"))
-          .is(true)
+        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
+        header(HttpHeaderNames.Location).is(extractRelativePath(registrationCompletePageUrl))
       )
   )
 
   def getRegistrationCompletePage: Seq[ActionBuilder] =
     convertHttpActionToSeq(
       http("Navigate to 'registration complete' page")
-        .get(session => currentRedirectUrl(session))
+        .get(session => redirectUrlFromSession(session))
         .check(status.is(200))
-        .check(css("h1").find.transform(_.trim).is("Registration Complete"))
+        .check(css("h1").find.transform(_.trim).is("Registration Complete")) // Not sure whether to keep this check
     )
+
 }

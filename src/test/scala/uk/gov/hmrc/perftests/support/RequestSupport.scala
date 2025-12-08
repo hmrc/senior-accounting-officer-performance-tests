@@ -23,36 +23,51 @@ import jodd.lagarto.dom.NodeSelector
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object RequestSupport extends ServicesConfiguration {
-  val authBaseUrl: String                 = baseUrlFor("auth-login-stub")
-  val companyBaseUrl: String              = baseUrlFor("incorporated-entity-identification-frontend")
-  val baseUrl: String                     = baseUrlFor("senior-accounting-officer-registration-frontend")
-  val authorityWizardPageUrl: String      = s"$authBaseUrl/auth-login-stub/gg-sign-in"
-  val registrationPageUrl: String         = s"$baseUrl/senior-accounting-officer/registration"
-  val businessMatchUrl: String            = s"$registrationPageUrl/business-match"
-  val contactDetailsPageUrl: String       = s"$registrationPageUrl/contact-details"
-  val changeFirstContactNameUrl: String   = s"$contactDetailsPageUrl/first/change-name"
-  val changeFirstContactEmailUrl: String  = s"$contactDetailsPageUrl/first/change-email"
-  val changeSecondContactNameUrl: String  = s"$contactDetailsPageUrl/second/change-name"
-  val changeSecondContactEmailUrl: String = s"$contactDetailsPageUrl/second/change-email"
-  val checkYourAnswersUrl: String         = s"$contactDetailsPageUrl/check-your-answers"
-  val mdtpCookie: String                  = "mdtp=${mdtpCookie}"
-  val mdtpdiCookie: String                = "mdtpdi=${mdtpdiCookie}"
+  val authBaseUrl: String                            = baseUrlFor("auth-login-stub")
+  val companyBaseUrl: String                         = baseUrlFor("incorporated-entity-identification-frontend")
+  val baseUrl: String                                = baseUrlFor("senior-accounting-officer-registration-frontend")
+  val authorityWizardPageUrl: String                 = s"$authBaseUrl/auth-login-stub/gg-sign-in"
+  val registrationPageUrl: String                    = s"$baseUrl/senior-accounting-officer/registration"
+  val registrationCompletePageUrl: String            = s"$registrationPageUrl/registration-complete"
+  val businessMatchUrl: String                       = s"$registrationPageUrl/business-match"
+  val businessMatchResultWithJourneyIdPrefix: String = s"$businessMatchUrl/result?journeyId="
+  val contactDetailsPageUrl: String                  = s"$registrationPageUrl/contact-details"
+  val baseGrsStubUrl: String                         = s"$registrationPageUrl/test-only/grs-stub"
+  val addFirstContactNameUrl: String                 = s"$contactDetailsPageUrl/first/name"
+  val addFirstContactEmailUrl: String                = s"$contactDetailsPageUrl/first/email"
+  val addAnotherContactPageUrl: String               = s"$contactDetailsPageUrl/first/add-another"
+  val addSecondContactNameUrl: String                = s"$contactDetailsPageUrl/second/name"
+  val addSecondContactEmailUrl: String               = s"$contactDetailsPageUrl/second/email"
+  val changeFirstContactNameUrl: String              = s"$contactDetailsPageUrl/first/change-name"
+  val changeFirstContactEmailUrl: String             = s"$contactDetailsPageUrl/first/change-email"
+  val changeSecondContactNameUrl: String             = s"$contactDetailsPageUrl/second/change-name"
+  val changeSecondContactEmailUrl: String            = s"$contactDetailsPageUrl/second/change-email"
+  val checkYourAnswersUrl: String                    = s"$contactDetailsPageUrl/check-your-answers"
+  val redirectUrlKey: String                         = "redirectUrl"
+  val csrfTokenKey: String                           = "csrfToken"
+  val mdtpCookieKey: String                          = "mdtpCookie"
+  val mdtpdiCookieKey: String                        = "mdtpdiCookie"
+  val mdtpCookieValue: String                        = "mdtp=${mdtpCookie}"
+  val mdtpdiCookieValue: String                      = "mdtpdi=${mdtpdiCookie}"
+  val journeyIdKey: String                           = "journeyId"
+  val journeyIdRegexPattern: String                  = "/([a-f0-9\\-]+)"
 
-  def extractAndSaveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
-    css("input[name=csrfToken]", "value").exists.saveAs("csrfToken")
+  def saveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
+    css("input[name=csrfToken]", "value").exists.saveAs(csrfTokenKey)
 
-  def currentRequestUrl(session: Session): String =
-    session("requestUrl").as[String]
+  def csrfTokenFromSession(session: Session): String = session(csrfTokenKey).as[String]
 
-  def currentRedirectUrl(session: Session): String = {
-    val redirectUrl = session("redirectUrl").as[String]
+  def redirectUrlFromSession(session: Session): String = {
+    val redirectUrl = session(redirectUrlKey).as[String]
     if (redirectUrl.startsWith("http")) {
       redirectUrl
     } else s"$baseUrl$redirectUrl"
   }
 
-  def areAllContactsAddedUrl(session: Session): String =
-    session("areAllContactsAddedUrl").as[String]
+  def businessMatchWithJourneyIdUrl(session: Session): String =
+    s"$businessMatchResultWithJourneyIdPrefix${journeyIdFromSession(session)}"
+
+  def journeyIdFromSession(session: Session): String = session(journeyIdKey).as[String]
 
   def assertAllValuesPresentInSelector(
     selector: String,
@@ -61,4 +76,5 @@ object RequestSupport extends ServicesConfiguration {
     .transform(_.map(_.trim).toSet)
     .is(expectedValues)
 
+  def extractRelativePath(url: String): String = java.net.URI.create(url).getPath
 }
