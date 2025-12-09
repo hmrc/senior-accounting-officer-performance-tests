@@ -21,15 +21,13 @@ import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef._
 import uk.gov.hmrc.perftests.support.GatlingSupport._
 import uk.gov.hmrc.perftests.support.RequestSupport._
-import uk.gov.hmrc.perftests.support.TestDataSupport._
-import uk.gov.hmrc.perftests.support.adt.{AffinityGroup, ConfidenceLevel, CredentialStrength, Role}
+import uk.gov.hmrc.perftests.support.adt._
 
 object AuthorityRecord {
 
   def getAuthorityWizardPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'Authority Wizard' page")
       .get(authorityWizardPageUrl)
-      .queryParam("continue", registrationPageUrl)
       .check(status.is(200))
       .check(saveCsrfToken())
   )
@@ -39,17 +37,14 @@ object AuthorityRecord {
       .post(authorityWizardPageUrl)
       .disableFollowRedirect
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam("authorityId", _ => randomAuthorityId)
+      .formParam("authorityId", "")
       .formParam("redirectionUrl", registrationPageUrl)
       .formParam(CredentialStrength.fieldName, CredentialStrength.Strong.value)
-      .formParam(ConfidenceLevel.fieldName, ConfidenceLevel.Medium.value)
-      .formParam(AffinityGroup.fieldName, _ => randomAffinityGroup)
-      .formParam("email", _ => randomTestEmail)
-      .formParam(Role.fieldName, Role.User.value)
+      .formParam(ConfidenceLevel.fieldName, ConfidenceLevel.Cl50.value)
+      .formParam(AffinityGroup.fieldName, _ => AffinityGroup.Organisation.value)
+      .formParam("email", "user@test.com")
+      .formParam(CredentialRole.fieldName, CredentialRole.User.value)
       .check(status.is(303))
-      .check(
-        header(HttpHeaderNames.Location).is(registrationPageUrl),
-        header(HttpHeaderNames.Location).saveAs(redirectUrlKey)
-      )
+      .check(header(HttpHeaderNames.Location).is(registrationPageUrl))
   )
 }

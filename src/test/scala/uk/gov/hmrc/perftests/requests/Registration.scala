@@ -43,7 +43,7 @@ object Registration {
         .check(status.is(303))
         .check(
           header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-          header(HttpHeaderNames.Location).transform(_.contains(baseGrsStubUrl)).is(true),
+          header(HttpHeaderNames.Location).transform(_.contains(grsStubPathSegment)).is(true),
           headerRegex(HttpHeaderNames.Location, journeyIdRegexPattern).saveAs(journeyIdKey)
         )
     )
@@ -63,7 +63,10 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(session => businessMatchWithJourneyIdUrl(session))
+//        header(HttpHeaderNames.Location).transform(_.contains(session => businessMatchWithJourneyIdUrl(session)).is(true),
+        header(HttpHeaderNames.Location)
+          .transform(extractRelativePath)
+          .is(session => businessMatchWithJourneyIdUrl(session))
       )
   )
 

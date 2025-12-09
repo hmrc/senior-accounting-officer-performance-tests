@@ -20,7 +20,6 @@ import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityRecord.{getAuthorityWizardPage, submitNewAuthorityRecord}
 import uk.gov.hmrc.perftests.requests.Registration._
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
-import uk.gov.hmrc.perftests.support.TestDataSupport.resetUserDefinedSessionData
 
 class Simulation extends PerformanceTestRunner {
 
@@ -64,11 +63,6 @@ class Simulation extends PerformanceTestRunner {
       getRegistrationPageAfterSaving,
       continueToSubmitRegistration,
       getRegistrationCompletePage
-    )
-
-  setup("reset-user-defined-session-data", "Reset user defined session data")
-    .withChainedActions(
-      resetUserDefinedSessionData.actionBuilders
     )
 
   runSimulation()

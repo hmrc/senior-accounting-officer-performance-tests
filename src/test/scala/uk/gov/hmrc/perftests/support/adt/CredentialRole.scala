@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.perftests.support.adt
 
-sealed trait Role {
+sealed trait CredentialRole {
   def value: String
 }
 
-object Role {
+object CredentialRole {
   val fieldName: String = "credentialRole"
-  case object User extends Role { val value = "User" }
-  case object Admin extends Role { val value = "Administrator" }
+  case object User extends CredentialRole { val value = "User" }
+  case object Admin extends CredentialRole { val value = "Administrator" }
 }
