@@ -63,7 +63,6 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-//        header(HttpHeaderNames.Location).transform(_.contains(session => businessMatchWithJourneyIdUrl(session)).is(true),
         header(HttpHeaderNames.Location)
           .transform(extractRelativeUrl)
           .is(session => businessMatchWithJourneyIdUrl(session))

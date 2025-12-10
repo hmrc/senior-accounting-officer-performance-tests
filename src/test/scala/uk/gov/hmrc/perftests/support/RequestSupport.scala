@@ -51,7 +51,7 @@ object RequestSupport extends ServicesConfiguration {
   val mdtpCookieValue: String                = "mdtp=${mdtpCookie}"
   val mdtpdiCookieValue: String              = "mdtpdi=${mdtpdiCookie}"
   val journeyIdKey: String                   = "journeyId"
-  val journeyIdRegexPattern: String          = "/([a-f0-9\\-]+)"
+  val journeyIdRegexPattern: String          = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
 
   def saveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
     css("input[name=csrfToken]", "value").exists.saveAs(csrfTokenKey)
