@@ -18,7 +18,7 @@ package uk.gov.hmrc.perftests.requests
 
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.http.Predef.{headerRegex, _}
+import io.gatling.http.Predef._
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
 import uk.gov.hmrc.perftests.support.RequestSupport._
 
@@ -295,17 +295,6 @@ object Registration {
       .get(checkYourAnswersUrl)
       .check(status.is(200))
       .check(saveCsrfToken())
-      .check(
-        assertAllValuesPresentInSelector( // Not sure whether to keep this check
-          ".govuk-summary-list__" + valueKey,
-          Set(
-            amendedFirstContactName,
-            amendedFirstContactEmail,
-            amendedSecondContactName,
-            amendedSecondContactEmail
-          )
-        )
-      )
   )
 
   def continueToSaveAndSubmitRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(

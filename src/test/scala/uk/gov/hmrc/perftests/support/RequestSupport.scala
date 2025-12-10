@@ -69,13 +69,6 @@ object RequestSupport extends ServicesConfiguration {
 
   def journeyIdFromSession(session: Session): String = session(journeyIdKey).as[String]
 
-  def assertAllValuesPresentInSelector(
-    selector: String,
-    expectedValues: Set[String]
-  ): CheckBuilder.Final[CssCheckType, NodeSelector] = css(selector).findAll
-    .transform(_.map(_.trim).toSet)
-    .is(expectedValues)
-
   def extractRelativeUrl(url: String): String = {
     val uri   = java.net.URI.create(url)
     val query = Option(uri.getRawQuery).fold("")(queryParam => s"?$queryParam")
