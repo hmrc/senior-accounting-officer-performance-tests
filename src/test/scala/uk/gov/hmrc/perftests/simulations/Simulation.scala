@@ -17,7 +17,7 @@
 package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.AuthorityRecord.{getAuthorityWizardPage, submitNewAuthorityRecord}
+import uk.gov.hmrc.perftests.requests.AuthorityWizard.{getAuthorityWizardPage, submitNewAuthorityRecord}
 import uk.gov.hmrc.perftests.requests.Registration._
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
 

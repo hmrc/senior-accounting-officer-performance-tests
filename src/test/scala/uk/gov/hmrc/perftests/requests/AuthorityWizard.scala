@@ -23,7 +23,7 @@ import uk.gov.hmrc.perftests.support.GatlingSupport._
 import uk.gov.hmrc.perftests.support.RequestSupport._
 import uk.gov.hmrc.perftests.support.adt._
 
-object AuthorityRecord {
+object AuthorityWizard {
 
   def getAuthorityWizardPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'Authority Wizard' page")
