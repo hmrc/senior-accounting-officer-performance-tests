@@ -24,7 +24,6 @@ import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object RequestSupport extends ServicesConfiguration {
   val authBaseUrl: String                    = baseUrlFor("auth-login-stub")
-  val companyBaseUrl: String                 = baseUrlFor("incorporated-entity-identification-frontend")
   val baseUrl: String                        = baseUrlFor("senior-accounting-officer-registration-frontend")
   val authorityWizardPageUrl: String         = s"$authBaseUrl/auth-login-stub/gg-sign-in"
   val registrationPageUrl: String            = s"$baseUrl/senior-accounting-officer/registration"
@@ -78,7 +77,7 @@ object RequestSupport extends ServicesConfiguration {
     .is(expectedValues)
 
   def extractRelativeUrl(url: String): String = {
-    val uri = java.net.URI.create(url)
+    val uri   = java.net.URI.create(url)
     val query = Option(uri.getRawQuery).fold("")(queryParam => s"?$queryParam")
     s"${uri.getPath}$query"
   }
