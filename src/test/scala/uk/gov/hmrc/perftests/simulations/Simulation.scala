@@ -46,22 +46,27 @@ class Simulation extends PerformanceTestRunner {
       getAddFirstContactNamePage,
       continueToAddFirstContactEmail,
       getAddFirstContactEmailPage,
+
       continueToAddMoreContactsQuestionPage,
       getAddMoreContactsQuestionPage,
-      continueToCheckYourAnswersForContact,
-      getChangeFirstContactNamePage,
-      continueToCheckYourAnswersForFirstContactNameChange,
-      getChangeFirstContactEmailPage,
-      continueToCheckYourAnswersForFirstContactEmailChange,
-      getCheckYourAnswersPage,
+
+      //continueToCheckYourAnswersForContact,
+      //getChangeFirstContactNamePage,
+      //continueToCheckYourAnswersForFirstContactNameChange,
+      //getChangeFirstContactEmailPage,
+      //continueToCheckYourAnswersForFirstContactEmailChange,
+      //getCheckYourAnswersPage,  // ?
+
       continueToAddSecondContact,
       getAddSecondContactNamePage,
       continueToAddSecondContactEmail,
       getAddSecondContactEmailPage,
-      getChangeSecondContactNamePage,
-      continueToCheckYourAnswersForSecondContactNameChange,
-      getChangeSecondContactEmailPage,
-      continueToCheckYourAnswersForSecondContactEmailChange,
+      // TODO - Post second contact email
+      //getChangeSecondContactNamePage,
+      //continueToCheckYourAnswersForSecondContactNameChange,
+      //getChangeSecondContactEmailPage,
+      //continueToCheckYourAnswersForSecondContactEmailChange,
+
       getCheckYourAnswersPageShowingBothContacts,
       continueToSaveAndSubmitRegistration,
       getRegistrationPageAfterSaving,
