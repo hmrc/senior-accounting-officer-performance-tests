@@ -72,7 +72,6 @@ object Registration {
   def getInterimRedirectToRegistrationPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Interim call to 'registration' page with completed company details")
       .get(session => redirectUrlFromSession(session))
-      .formParam(journeyIdKey, session => journeyIdFromSession(session))
       .disableFollowRedirect
       .check(status.is(303))
       .check(

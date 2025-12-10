@@ -32,11 +32,15 @@ class Simulation extends PerformanceTestRunner {
   setup("register-company-for-service", "Registration")
     .withChainedActions(
       getRegistrationPage,
+
+      // GRS
       getGenericRegistrationServiceStubBeforeRedirect,
       getGenericRegistrationServiceStubAfterRedirect,
       sendResponseWithCompanyDetailsBeforeRedirect,
       getInterimRedirectToRegistrationPage,
       getRegistrationPageWithCompleteCompanyDetails,
+
+      // Contact Details pages  journey
       getContactDetailsPage,
       continueToProvideFirstContactDetails,
       getAddFirstContactNamePage,
