@@ -43,7 +43,7 @@ object RequestSupport extends ServicesConfiguration {
   val checkYourAnswersUrl: String            = s"$contactDetailsPageUrl/check-your-answers"
   val grsStubPathSegment: String             = "/test-only/grs-stub"
   val businessMatchResultPathSegment: String =
-    "/senior-accounting-officer/registration/business-match/result" // ?journeyId="
+    "/senior-accounting-officer/registration/business-match/result?journeyId="
   val redirectUrlKey: String                 = "redirectUrl"
   val csrfTokenKey: String                   = "csrfToken"
   val mdtpCookieKey: String                  = "mdtpCookie"
@@ -66,7 +66,7 @@ object RequestSupport extends ServicesConfiguration {
   }
 
   def businessMatchWithJourneyIdUrl(session: Session): String =
-    s"$businessMatchResultPathSegment" // ${journeyIdFromSession(session)}"
+    s"$businessMatchResultPathSegment${journeyIdFromSession(session)}"
 
   def journeyIdFromSession(session: Session): String = session(journeyIdKey).as[String]
 
@@ -77,5 +77,9 @@ object RequestSupport extends ServicesConfiguration {
     .transform(_.map(_.trim).toSet)
     .is(expectedValues)
 
-  def extractRelativePath(url: String): String = java.net.URI.create(url).getPath
+  def extractRelativePath(url: String): String = {
+    val uri = java.net.URI.create(url)
+    val query = Option(uri.getRawQuery).fold("")(queryParam => s"?$queryParam")
+    s"${uri.getPath}$query"
+  }
 }
