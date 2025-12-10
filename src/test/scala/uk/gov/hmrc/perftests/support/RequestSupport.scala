@@ -77,7 +77,7 @@ object RequestSupport extends ServicesConfiguration {
     .transform(_.map(_.trim).toSet)
     .is(expectedValues)
 
-  def extractRelativePath(url: String): String = {
+  def extractRelativeUrl(url: String): String = {
     val uri = java.net.URI.create(url)
     val query = Option(uri.getRawQuery).fold("")(queryParam => s"?$queryParam")
     s"${uri.getPath}$query"

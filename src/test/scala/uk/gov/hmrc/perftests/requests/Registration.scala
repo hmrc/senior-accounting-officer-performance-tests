@@ -65,7 +65,7 @@ object Registration {
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
 //        header(HttpHeaderNames.Location).transform(_.contains(session => businessMatchWithJourneyIdUrl(session)).is(true),
         header(HttpHeaderNames.Location)
-          .transform(extractRelativePath)
+          .transform(extractRelativeUrl)
           .is(session => businessMatchWithJourneyIdUrl(session))
       )
   )
@@ -78,7 +78,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(registrationPageUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(registrationPageUrl))
       )
   )
 
@@ -103,7 +103,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(addFirstContactNameUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(addFirstContactNameUrl))
       )
   )
 
@@ -123,7 +123,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(addFirstContactEmailUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(addFirstContactEmailUrl))
       )
   )
 
@@ -143,7 +143,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(addAnotherContactPageUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(addAnotherContactPageUrl))
       )
   )
 
@@ -163,7 +163,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
       )
   )
 
@@ -183,7 +183,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists,
-        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
       )
   )
 
@@ -203,7 +203,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists,
-        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
       )
   )
 
@@ -223,7 +223,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(addSecondContactNameUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(addSecondContactNameUrl))
       )
   )
 
@@ -243,7 +243,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(addSecondContactEmailUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(addSecondContactEmailUrl))
       )
   )
 
@@ -268,7 +268,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists,
-        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
       )
   )
 
@@ -287,7 +287,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(checkYourAnswersUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
       )
   )
 
@@ -321,7 +321,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(registrationPageUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(registrationPageUrl))
       )
   )
 
@@ -344,7 +344,7 @@ object Registration {
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativePath(registrationCompletePageUrl))
+        header(HttpHeaderNames.Location).is(extractRelativeUrl(registrationCompletePageUrl))
       )
   )
 
