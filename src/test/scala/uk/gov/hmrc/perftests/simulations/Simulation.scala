@@ -49,6 +49,7 @@ class Simulation extends PerformanceTestRunner {
       // get First Email
       // submit First Email
 
+      // add first contact
       getContactDetailsPage,
       continueToProvideFirstContactDetails,
       getAddFirstContactNamePage,
@@ -57,21 +58,11 @@ class Simulation extends PerformanceTestRunner {
       continueToAddMoreContactsQuestionPage,
       getAddMoreContactsQuestionPage,
 
-      // continueToCheckYourAnswersForContact,
-      // getChangeFirstContactNamePage,
-      // continueToCheckYourAnswersForFirstContactNameChange,
-      // getChangeFirstContactEmailPage,
-      // continueToCheckYourAnswersForFirstContactEmailChange,
-      // getCheckYourAnswersPage,  // ?
-
+      // add second contact
       continueToAddSecondContact,
       getAddSecondContactNamePage,
       continueToAddSecondContactEmail,
       getAddSecondContactEmailPage,
-      // TODO - Post second contact email
-      // getChangeSecondContactNamePage,
-      // continueToCheckYourAnswersForSecondContactNameChange,
-      // getChangeSecondContactEmailPage,
       continueToCheckYourAnswersForSecondContactEmailChange,
       getCheckYourAnswersPageShowingBothContacts,
       continueToSaveAndSubmitRegistration,

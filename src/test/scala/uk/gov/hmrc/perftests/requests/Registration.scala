@@ -152,66 +152,6 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToCheckYourAnswersForContact: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Continue to 'check your answers' page (call before redirect)")
-      .post(addAnotherContactPageUrl)
-      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, "yes")
-      .disableFollowRedirect
-      .check(status.is(303))
-      .check(
-        header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
-        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
-      )
-  )
-
-  def getChangeFirstContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'change first contact name' page")
-      .get(changeFirstContactNameUrl)
-      .check(status.is(200))
-      .check(saveCsrfToken())
-  )
-
-  def continueToCheckYourAnswersForFirstContactNameChange: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Continue to 'check your answers' page after 1st contact name change (call before redirect)")
-      .post(changeFirstContactNameUrl)
-      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, firstContactName)
-      .disableFollowRedirect
-      .check(status.is(303))
-      .check(
-        header(HttpHeaderNames.Location).exists,
-        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
-      )
-  )
-
-  def getChangeFirstContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'change first contact email' page")
-      .get(changeFirstContactEmailUrl)
-      .check(status.is(200))
-      .check(saveCsrfToken())
-  )
-
-  def continueToCheckYourAnswersForFirstContactEmailChange: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Continue to 'check your answers' page after 1st contact email change (call before redirect)")
-      .post(changeFirstContactEmailUrl)
-      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, firstContactEmail)
-      .disableFollowRedirect
-      .check(status.is(303))
-      .check(
-        header(HttpHeaderNames.Location).exists,
-        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
-      )
-  )
-
-  def getCheckYourAnswersPage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'check your answers' page")
-      .get(checkYourAnswersUrl)
-      .check(status.is(200))
-      .check(saveCsrfToken())
-  )
-
   def continueToAddSecondContact: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to add 2nd contact details (call before redirect)")
       .post(addAnotherContactPageUrl)
@@ -248,31 +188,6 @@ object Registration {
   def getAddSecondContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'add 2nd contact email' page")
       .get(session => redirectUrlFromSession(session))
-      .check(status.is(200))
-  )
-
-  def getChangeSecondContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'change second contact name' page")
-      .get(changeSecondContactNameUrl)
-      .check(status.is(200))
-  )
-
-  def continueToCheckYourAnswersForSecondContactNameChange: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Continue to 'check your answers' page after 2nd contact name change (call before redirect)")
-      .post(changeSecondContactNameUrl)
-      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, secondContactName)
-      .disableFollowRedirect
-      .check(status.is(303))
-      .check(
-        header(HttpHeaderNames.Location).exists,
-        header(HttpHeaderNames.Location).is(extractRelativeUrl(checkYourAnswersUrl))
-      )
-  )
-
-  def getChangeSecondContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'change second contact email' page")
-      .get(changeSecondContactEmailUrl)
       .check(status.is(200))
   )
 
