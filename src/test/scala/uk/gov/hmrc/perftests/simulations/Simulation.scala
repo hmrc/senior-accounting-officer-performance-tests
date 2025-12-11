@@ -47,12 +47,12 @@ class Simulation extends PerformanceTestRunner {
       postAddFirstContactNamePage,
       getAddFirstContactEmailPage,
       postAddFirstContactEmailPage,
-      getAddMoreContactsQuestionPage,
+      getAddAnotherContactPage,
 
       // add second contact
-      continueToAddSecondContact,
+      postAddAnotherContactPage,
       getAddSecondContactNamePage,
-      continueToAddSecondContactEmail,
+      postAddSecondContactNamePage,
       getAddSecondContactEmailPage,
       continueToCheckYourAnswersForSecondContactEmailChange,
       getCheckYourAnswersPageShowingBothContacts,
@@ -63,6 +63,18 @@ class Simulation extends PerformanceTestRunner {
       continueToSubmitRegistration,
       getRegistrationCompletePage
     )
+
+//  setup("grs-setup", "GRS Setup")
+//    .withChainedActions(
+//      getRegistrationPage,
+//
+//      // GRS
+//      getGenericRegistrationServiceStubBeforeRedirect,
+//      getGenericRegistrationServiceStubAfterRedirect,
+//      sendResponseWithCompanyDetailsBeforeRedirect,
+//      getInterimRedirectToRegistrationPage,
+//      getRegistrationPageWithCompleteCompanyDetails
+//    )
 
   runSimulation()
 }

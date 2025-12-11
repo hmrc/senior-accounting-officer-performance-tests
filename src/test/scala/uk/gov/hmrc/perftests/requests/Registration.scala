@@ -145,14 +145,14 @@ object Registration {
       )
   )
 
-  def getAddMoreContactsQuestionPage: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'add more contacts' question page")
+  def getAddAnotherContactPage: Seq[ActionBuilder] = convertHttpActionToSeq(
+    http("Navigate to 'add another contact' page")
       .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
       .check(saveCsrfToken())
   )
 
-  def continueToAddSecondContact: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postAddAnotherContactPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to add 2nd contact details (call before redirect)")
       .post(addAnotherContactPageUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
@@ -172,7 +172,7 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToAddSecondContactEmail: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postAddSecondContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'add 2nd contact email' page (call before redirect)")
       .post(addSecondContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
