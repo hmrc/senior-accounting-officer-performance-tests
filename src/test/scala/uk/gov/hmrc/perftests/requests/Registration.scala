@@ -93,7 +93,7 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToProvideFirstContactDetails: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postContactDetailsPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to add 1st contact details (call before redirect)")
       .post(contactDetailsPageUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
@@ -112,7 +112,7 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToAddFirstContactEmail: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postAddFirstContactNamePage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'add 1st contact email' page (call before redirect)")
       .post(addFirstContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
@@ -132,7 +132,7 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToAddMoreContactsQuestionPage: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postAddFirstContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'add more contacts' question page (call before redirect)")
       .post(addFirstContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))

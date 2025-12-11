@@ -40,22 +40,13 @@ class Simulation extends PerformanceTestRunner {
       getInterimRedirectToRegistrationPage,
       getRegistrationPageWithCompleteCompanyDetails,
 
-      // example POC
-      // Contact Details pages  journey
-      // get Contact Details page
-      // submit Contact Details page
-      // get First Contact Name
-      // submit First contact Name
-      // get First Email
-      // submit First Email
-
       // add first contact
       getContactDetailsPage,
-      continueToProvideFirstContactDetails,
+      postContactDetailsPage,
       getAddFirstContactNamePage,
-      continueToAddFirstContactEmail,
+      postAddFirstContactNamePage,
       getAddFirstContactEmailPage,
-      continueToAddMoreContactsQuestionPage,
+      postAddFirstContactEmailPage,
       getAddMoreContactsQuestionPage,
 
       // add second contact
