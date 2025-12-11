@@ -23,11 +23,11 @@ import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
 import uk.gov.hmrc.perftests.support.RequestSupport._
 
 object Registration {
-  private val valueKey: String                  = "value"
-  private val amendedFirstContactName: String   = "amendedFirstContactName"
-  private val amendedFirstContactEmail: String  = "amendedEmail@1st-Contact.com"
-  private val amendedSecondContactName: String  = "amendedSecondContactName"
-  private val amendedSecondContactEmail: String = "amendedEmail@2nd-Contact.com"
+  private val valueKey: String           = "value"
+  private val firstContactName: String   = "firstContactName"
+  private val firstContactEmail: String  = "email@1st-Contact.com"
+  private val secondContactName: String  = "secondContactName"
+  private val secondContactEmail: String = "email@2nd-Contact.com"
 
   def getRegistrationPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'registration' page")
@@ -116,7 +116,7 @@ object Registration {
     http("Continue to 'add 1st contact email' page (call before redirect)")
       .post(addFirstContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedFirstContactName)
+      .formParam(valueKey, firstContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -136,7 +136,7 @@ object Registration {
     http("Continue to 'add more contacts' question page (call before redirect)")
       .post(addFirstContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedFirstContactEmail)
+      .formParam(valueKey, firstContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -176,7 +176,7 @@ object Registration {
     http("Continue to 'check your answers' page after 1st contact name change (call before redirect)")
       .post(changeFirstContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedFirstContactName)
+      .formParam(valueKey, firstContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -196,7 +196,7 @@ object Registration {
     http("Continue to 'check your answers' page after 1st contact email change (call before redirect)")
       .post(changeFirstContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedFirstContactEmail)
+      .formParam(valueKey, firstContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -236,7 +236,7 @@ object Registration {
     http("Continue to 'add 2nd contact email' page (call before redirect)")
       .post(addSecondContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedSecondContactName)
+      .formParam(valueKey, secondContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -261,7 +261,7 @@ object Registration {
     http("Continue to 'check your answers' page after 2nd contact name change (call before redirect)")
       .post(changeSecondContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedSecondContactName)
+      .formParam(valueKey, secondContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -280,7 +280,7 @@ object Registration {
     http("Continue to 'check your answers' page after 2nd contact email change (call before redirect)")
       .post(addSecondContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, amendedSecondContactEmail)
+      .formParam(valueKey, secondContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -300,10 +300,10 @@ object Registration {
     http("Continue to save registration (call before redirect)")
       .post(session => redirectUrlFromSession(session))
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam("contacts[0].name", amendedFirstContactName)
-      .formParam("contacts[0].email", amendedFirstContactEmail)
-      .formParam("contacts[1].name", amendedSecondContactName)
-      .formParam("contacts[1].email", amendedSecondContactEmail)
+      .formParam("contacts[0].name", firstContactName)
+      .formParam("contacts[0].email", firstContactEmail)
+      .formParam("contacts[1].name", secondContactName)
+      .formParam("contacts[1].email", secondContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
