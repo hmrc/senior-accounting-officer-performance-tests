@@ -116,7 +116,7 @@ object Registration {
     http("Continue to 'add 1st contact email' page (call before redirect)")
       .post(addFirstContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, "ATestNameForFirstContact")
+      .formParam(valueKey, amendedFirstContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -136,7 +136,7 @@ object Registration {
     http("Continue to 'add more contacts' question page (call before redirect)")
       .post(addFirstContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, "aTestEmailForFirstContact@tester.co.uk")
+      .formParam(valueKey, amendedFirstContactEmail)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -236,7 +236,7 @@ object Registration {
     http("Continue to 'add 2nd contact email' page (call before redirect)")
       .post(addSecondContactNameUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
-      .formParam(valueKey, "TestNameForSecondContact")
+      .formParam(valueKey, amendedSecondContactName)
       .disableFollowRedirect
       .check(status.is(303))
       .check(
@@ -278,7 +278,7 @@ object Registration {
 
   def continueToCheckYourAnswersForSecondContactEmailChange: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page after 2nd contact email change (call before redirect)")
-      .post(changeSecondContactEmailUrl)
+      .post(addSecondContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
       .formParam(valueKey, amendedSecondContactEmail)
       .disableFollowRedirect

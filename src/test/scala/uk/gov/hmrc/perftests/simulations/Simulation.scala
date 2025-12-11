@@ -65,7 +65,7 @@ class Simulation extends PerformanceTestRunner {
       //getChangeSecondContactNamePage,
       //continueToCheckYourAnswersForSecondContactNameChange,
       //getChangeSecondContactEmailPage,
-      //continueToCheckYourAnswersForSecondContactEmailChange,
+      continueToCheckYourAnswersForSecondContactEmailChange,
 
       getCheckYourAnswersPageShowingBothContacts,
       continueToSaveAndSubmitRegistration,
