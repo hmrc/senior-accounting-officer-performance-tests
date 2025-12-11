@@ -69,6 +69,8 @@ class Simulation extends PerformanceTestRunner {
 
       getCheckYourAnswersPageShowingBothContacts,
       continueToSaveAndSubmitRegistration,
+
+      //Submit sign up
       getRegistrationPageAfterSaving,
       continueToSubmitRegistration,
       getRegistrationCompletePage

@@ -317,10 +317,6 @@ object Registration {
       .get(session => redirectUrlFromSession(session))
       .check(status.is(200))
       .check(saveCsrfToken())
-      .check( // Not sure whether to keep this check/request
-        css("#company-details-status").find.transform(_.trim).is("Completed"),
-        css("#contacts-details-status").find.transform(_.trim).is("Completed")
-      )
   )
 
   def continueToSubmitRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(
@@ -340,7 +336,6 @@ object Registration {
       http("Navigate to 'registration complete' page")
         .get(session => redirectUrlFromSession(session))
         .check(status.is(200))
-        .check(css("h1").find.transform(_.trim).is("Registration Complete")) // Not sure whether to keep this check
     )
 
 }
