@@ -29,52 +29,44 @@ class Simulation extends PerformanceTestRunner {
       submitNewAuthorityRecord
     )
 
-  setup("register-company-for-service", "Registration")
+  setup("grs-setup", "GRS Setup")
     .withChainedActions(
       getRegistrationPage,
-
-      // GRS
       getGenericRegistrationServiceStubBeforeRedirect,
       getGenericRegistrationServiceStubAfterRedirect,
       sendResponseWithCompanyDetailsBeforeRedirect,
       getInterimRedirectToRegistrationPage,
-      getRegistrationPageWithCompleteCompanyDetails,
+      getRegistrationPageWithCompleteCompanyDetails
+    )
 
-      // add first contact
+  setup("registration-first-contact", "Registration First Contact")
+    .withChainedActions(
       getContactDetailsPage,
       postContactDetailsPage,
       getAddFirstContactNamePage,
       postAddFirstContactNamePage,
       getAddFirstContactEmailPage,
-      postAddFirstContactEmailPage,
-      getAddAnotherContactPage,
+      postAddFirstContactEmailPage
+    )
 
-      // add second contact
+  setup("registration-second-contact", "Registration Second Contact")
+    .withChainedActions(
+      getAddAnotherContactPage,
       postAddAnotherContactPage,
       getAddSecondContactNamePage,
       postAddSecondContactNamePage,
       getAddSecondContactEmailPage,
       postAddSecondContactEmailPage,
-      getCheckYourAnswersPageShowingBothContacts,
-      postCheckYourAnswersPageShowingBothContacts,
+      getCheckYourAnswersPage,
+      postCheckYourAnswersPage
+    )
 
-      // Submit sign up
-      getRegistrationPageAfterSaving,
+  setup("submit-registration", "Registration Submit")
+    .withChainedActions(
+      getRegistrationPage,
       postRegistrationPage,
       getRegistrationCompletePage
     )
-
-//  setup("grs-setup", "GRS Setup")
-//    .withChainedActions(
-//      getRegistrationPage,
-//
-//      // GRS
-//      getGenericRegistrationServiceStubBeforeRedirect,
-//      getGenericRegistrationServiceStubAfterRedirect,
-//      sendResponseWithCompanyDetailsBeforeRedirect,
-//      getInterimRedirectToRegistrationPage,
-//      getRegistrationPageWithCompleteCompanyDetails
-//    )
 
   runSimulation()
 }

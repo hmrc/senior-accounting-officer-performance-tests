@@ -204,14 +204,14 @@ object Registration {
       )
   )
 
-  def getCheckYourAnswersPageShowingBothContacts: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def getCheckYourAnswersPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'check your answers' page to view both contacts")
       .get(checkYourAnswersUrl)
       .check(status.is(200))
       .check(saveCsrfToken())
   )
 
-  def postCheckYourAnswersPageShowingBothContacts: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postCheckYourAnswersPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to save registration (call before redirect)")
       .post(session => redirectUrlFromSession(session))
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
@@ -225,13 +225,6 @@ object Registration {
         header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey),
         header(HttpHeaderNames.Location).is(extractRelativeUrl(registrationPageUrl))
       )
-  )
-
-  def getRegistrationPageAfterSaving: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'registration' page following save and submission'")
-      .get(session => redirectUrlFromSession(session))
-      .check(status.is(200))
-      .check(saveCsrfToken())
   )
 
   def postRegistrationPage: Seq[ActionBuilder] = convertHttpActionToSeq(
