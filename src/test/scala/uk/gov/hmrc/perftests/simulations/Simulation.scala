@@ -54,13 +54,13 @@ class Simulation extends PerformanceTestRunner {
       getAddSecondContactNamePage,
       postAddSecondContactNamePage,
       getAddSecondContactEmailPage,
-      continueToCheckYourAnswersForSecondContactEmailChange,
+      postAddSecondContactEmailPage,
       getCheckYourAnswersPageShowingBothContacts,
-      continueToSaveAndSubmitRegistration,
+      postCheckYourAnswersPageShowingBothContacts,
 
       // Submit sign up
       getRegistrationPageAfterSaving,
-      continueToSubmitRegistration,
+      postRegistrationPage,
       getRegistrationCompletePage
     )
 

@@ -191,7 +191,7 @@ object Registration {
       .check(status.is(200))
   )
 
-  def continueToCheckYourAnswersForSecondContactEmailChange: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postAddSecondContactEmailPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'check your answers' page after 2nd contact email change (call before redirect)")
       .post(addSecondContactEmailUrl)
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
@@ -211,7 +211,7 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToSaveAndSubmitRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postCheckYourAnswersPageShowingBothContacts: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to save registration (call before redirect)")
       .post(session => redirectUrlFromSession(session))
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
@@ -234,7 +234,7 @@ object Registration {
       .check(saveCsrfToken())
   )
 
-  def continueToSubmitRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def postRegistrationPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Continue to 'registration complete' page (call before redirect)")
       .post(session => redirectUrlFromSession(session))
       .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
