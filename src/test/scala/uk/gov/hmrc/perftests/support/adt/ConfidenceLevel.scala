@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.example
+package uk.gov.hmrc.perftests.support.adt
 
-import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.example.ExampleRequests._
+sealed trait ConfidenceLevel { def value: String }
 
-class ExampleSimulation extends PerformanceTestRunner {
-
-  setup("home-page", "Home Page") withRequests navigateToHomePage
-
-  setup("post-vat-return-period", "Post vat return period") withRequests postVatReturnPeriod
-
-  setup("get-turnover-page", "Get turnover page") withRequests getTurnoverPage
-
-  runSimulation()
+object ConfidenceLevel {
+  val fieldName: String = "confidenceLevel"
+  case object Cl50 extends ConfidenceLevel { val value = "50" }
+  case object Cl200 extends ConfidenceLevel { val value = "200" }
+  case object Cl250 extends ConfidenceLevel { val value = "250" }
 }

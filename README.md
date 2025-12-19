@@ -2,7 +2,7 @@
 
 # senior-accounting-officer-performance-tests
 
-Performance test suite for the `<senior-accounting-officer>`, using [performance-test-runner](https://github.com/hmrc/performance-test-runner) under the hood.
+Performance test suite for the `Senior Accounting Officer`, using [performance-test-runner](https://github.com/hmrc/performance-test-runner) under the hood.
 
 ## Pre-requisites
 
@@ -10,11 +10,13 @@ Performance test suite for the `<senior-accounting-officer>`, using [performance
 
 Start Mongo Docker container following instructions from the [MDTP Handbook](https://docs.tax.service.gov.uk/mdtp-handbook/documentation/developer-set-up/set-up-mongodb.html).
 
-Start `PLATFORM_TEST_EXAMPLE_UI_JOURNEY_TESTS` services as follows:
+Start `senior-accounting-officer-acceptance-tests` services as follows:
 
 ```bash
-sm2 --start PLATFORM_TEST_EXAMPLE_UI_JOURNEY_TESTS
+sm2 --start SAO_ALL
 ```
+
+Turn off GRS Stub here: http://localhost:10057/senior-accounting-officer/registration/test-only/feature-toggle
 
 ### Logging
 
