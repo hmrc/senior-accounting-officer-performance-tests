@@ -17,7 +17,7 @@
 package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.AuthorityWizard.{getAuthorityWizardPage, submitNewAuthorityRecord}
+import uk.gov.hmrc.perftests.requests.AuthorityWizard.{getAuthorityWizardPage, submitNewAuthorityRecordForNotification, submitNewAuthorityRecordForRegistration}
 import uk.gov.hmrc.perftests.requests.Registration._
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
 
@@ -26,7 +26,7 @@ class Simulation extends PerformanceTestRunner {
   setup("create-authority-record", "Submit new authority record")
     .withChainedActions(
       getAuthorityWizardPage,
-      submitNewAuthorityRecord
+      submitNewAuthorityRecordForRegistration
     )
 
   setup("grs-setup", "GRS Setup")
@@ -67,6 +67,20 @@ class Simulation extends PerformanceTestRunner {
       postRegistrationPage,
       getRegistrationCompletePage
     )
+
+
+  setup("create-authority-record-for-notification", "Submit new authority record for notification")
+    .withChainedActions(
+      getAuthorityWizardPage,
+      submitNewAuthorityRecordForNotification
+    )
+
+  setup("upload-template", "Upload a new submission template in notification journey")
+    .withChainedActions(
+
+    )
+
+
 
   runSimulation()
 }

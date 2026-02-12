@@ -24,9 +24,9 @@ import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object RequestSupport extends ServicesConfiguration {
   val authBaseUrl: String                    = baseUrlFor("auth-login-stub")
-  val baseUrl: String                        = baseUrlFor("senior-accounting-officer-registration-frontend")
+  val baseRegistrationUrl: String                        = baseUrlFor("senior-accounting-officer-registration-frontend")
   val authorityWizardPageUrl: String         = s"$authBaseUrl/auth-login-stub/gg-sign-in"
-  val registrationPageUrl: String            = s"$baseUrl/senior-accounting-officer/registration"
+  val registrationPageUrl: String            = s"$baseRegistrationUrl/senior-accounting-officer/registration"
   val registrationCompletePageUrl: String    = s"$registrationPageUrl/registration-complete"
   val businessMatchUrl: String               = s"$registrationPageUrl/business-match"
   val contactDetailsPageUrl: String          = s"$registrationPageUrl/contact-details"
@@ -43,6 +43,10 @@ object RequestSupport extends ServicesConfiguration {
   val grsStubPathSegment: String             = "/test-only/grs-stub"
   val businessMatchResultPathSegment: String =
     "/senior-accounting-officer/registration/business-match/result?journeyId="
+
+  val baseSubmissionUrl: String     = baseUrlFor("senior-accounting-officer-submission-frontend")
+  val notificationStartPageUrl: String = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/start"
+
   val redirectUrlKey: String                 = "redirectUrl"
   val csrfTokenKey: String                   = "csrfToken"
   val mdtpCookieKey: String                  = "mdtpCookie"
@@ -61,7 +65,7 @@ object RequestSupport extends ServicesConfiguration {
     val redirectUrl = session(redirectUrlKey).as[String]
     if (redirectUrl.startsWith("http")) {
       redirectUrl
-    } else s"$baseUrl$redirectUrl"
+    } else s"$baseRegistrationUrl$redirectUrl"
   }
 
   def businessMatchWithJourneyIdUrl(session: Session): String =
