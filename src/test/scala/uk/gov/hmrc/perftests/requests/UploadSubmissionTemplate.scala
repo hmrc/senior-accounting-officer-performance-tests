@@ -17,12 +17,10 @@
 package uk.gov.hmrc.perftests.requests
 
 import io.gatling.core.Predef._
-import io.gatling.core.Predef.find2Validate
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef._
-import io.gatling.http.Predef.{http, status}
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
-import uk.gov.hmrc.perftests.support.RequestSupport.{notificationStartPageUrl, notificationUploadPageUrl, redirectUrlFromSession, saveCsrfToken, saveUpscanParams, upscanParameters, upscanProxyUrl}
+import uk.gov.hmrc.perftests.support.RequestSupport._
 
 object UploadSubmissionTemplate {
 
@@ -42,8 +40,10 @@ object UploadSubmissionTemplate {
   def postNotificationUpload: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Post to 'Notification Upload' page")
       .post(upscanProxyUrl)
-      .formParam("file", "???")
+      .formUpload("file", "data/example.csv")
       .formParamSeq(upscanParameters.map(name => (name, (session: Session) => session(name))))
-      .check(status.is(200))
+      .check(status.is(303))
+      // TODO : Upload Id and Key or held in the hidden fields from form
+      .check(header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey))
   )
 }
