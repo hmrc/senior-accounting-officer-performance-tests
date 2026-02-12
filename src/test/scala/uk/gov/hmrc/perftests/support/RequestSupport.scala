@@ -46,6 +46,7 @@ object RequestSupport extends ServicesConfiguration {
 
   val baseSubmissionUrl: String     = baseUrlFor("senior-accounting-officer-submission-frontend")
   val notificationStartPageUrl: String = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/start"
+  val notificationUploadPageUrl: String = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/upload"
 
   val redirectUrlKey: String                 = "redirectUrl"
   val csrfTokenKey: String                   = "csrfToken"
@@ -55,6 +56,51 @@ object RequestSupport extends ServicesConfiguration {
   val mdtpdiCookieValue: String              = "mdtpdi=${mdtpdiCookie}"
   val journeyIdKey: String                   = "journeyId"
   val journeyIdRegexPattern: String          = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+
+  val successActionRedirect: String = "success_action_redirect"
+  val xAmzCredential: String = "x-amz-credential"
+  val xAmzMetaUpscanInitiateResponse: String = "x-amz-meta-upscan-initiate-response"
+  val xAmzMetaOriginalFilename: String = "x-amz-meta-original-filename"
+  val xAmzAlgorithm: String = "x-amz-algorithm"
+  val xAmzSignature: String = "x-amz-signature"
+  val errorActionRedirect: String = "error_action_redirect"
+  val xAmzMetaSessionId: String = "x-amz-meta-session-id"
+  val xAmzMetaCallbackUrl: String = "x-amz-meta-callback-url"
+  val xAmzDate: String = "x-amz-date"
+  val xAmzMetaUpscanInitiateReceived: String = "x-amz-meta-upscan-initiate-received"
+  val xAmzMetaRequestId: String = "x-amz-meta-request-id"
+  val key: String = "key"
+  val acl: String = "acl"
+  val xAmzMetaConsumingService: String = "x-amz-meta-consuming-service"
+  val policy: String = "policy"
+
+  val upscanParameters : List[String] = List(successActionRedirect, xAmzCredential, xAmzMetaUpscanInitiateResponse, xAmzMetaOriginalFilename, xAmzAlgorithm, xAmzSignature,
+    errorActionRedirect, xAmzMetaSessionId, xAmzMetaCallbackUrl, xAmzDate, xAmzMetaUpscanInitiateReceived, xAmzMetaRequestId, key, acl, xAmzMetaConsumingService,
+    policy)
+
+
+//    <input type="hidden" name="success_action_redirect" value="http://localhost:10056/senior-accounting-officer?uploadId=2f9dbcb3-c792-4169-83aa-191fe54adde0&amp;key=44de48ff-4f9c-4f19-8667-bfb4ce484a4b"/>
+  //            <input type="hidden" name="x-amz-credential" value="ASIAxxxxxxxxx/20180202/eu-west-2/s3/aws4_request"/>
+  //            <input type="hidden" name="x-amz-meta-upscan-initiate-response" value="2026-02-12T13:48:15.023433Z"/>
+  //            <input type="hidden" name="x-amz-meta-original-filename" value="${filename}"/>
+  //            <input type="hidden" name="x-amz-algorithm" value="AWS4-HMAC-SHA256"/>
+  //            <input type="hidden" name="x-amz-signature" value="xxxx"/>
+  //            <input type="hidden" name="error_action_redirect" value="http://localhost:10056/senior-accounting-officer"/>
+  //            <input type="hidden" name="x-amz-meta-session-id" value="723e6d8c-a351-4c99-b07d-b00258653d2f"/>
+  //            <input type="hidden" name="x-amz-meta-callback-url" value="http://localhost:10058/internal/upscan-callback"/>
+  //            <input type="hidden" name="x-amz-date" value="20260212T134815Z"/>
+  //            <input type="hidden" name="x-amz-meta-upscan-initiate-received" value="2026-02-12T13:48:15.023433Z"/>
+  //            <input type="hidden" name="x-amz-meta-request-id" value="e9d5d22a-bda6-4588-8e90-8538911e6b29"/>
+  //            <input type="hidden" name="key" value="44de48ff-4f9c-4f19-8667-bfb4ce484a4b"/>
+  //            <input type="hidden" name="acl" value="private"/>
+  //            <input type="hidden" name="x-amz-meta-consuming-service" value="senior-accounting-officer-submission-frontend"/>
+  //            <input type="hidden" name="policy" value="eyJjb25kaXRpb25zIjpbWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsMCw0MDk2XV19"/>
+
+
+  def saveUpscanParams(): Seq[CheckBuilder.Final[CssCheckType, NodeSelector]] = {
+    upscanParameters.map(param =>
+      css(s"input[name=$param]", "value").exists.saveAs(param))
+  }
 
   def saveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
     css("input[name=csrfToken]", "value").exists.saveAs(csrfTokenKey)
