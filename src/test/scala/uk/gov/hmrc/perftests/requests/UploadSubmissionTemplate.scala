@@ -30,13 +30,12 @@ object UploadSubmissionTemplate {
     http("Navigate to 'notification start' page")
       .get(notificationStartPageUrl)
       .check(status.is(200))
-      .check(saveUpscanParams():_*)
   )
 
   def getNotificationUploadPage: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Navigate to 'Notification Upload' page")
       .get(notificationUploadPageUrl)
       .check(status.is(200))
-      .check(saveCsrfToken())
+      .check(saveUpscanParams().map(e => checkBuilder2HttpCheck(e)(httpBodyCssCheckMaterializer)): _*)
   )
 }
