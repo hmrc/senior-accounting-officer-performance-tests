@@ -19,9 +19,8 @@ package uk.gov.hmrc.perftests.simulations
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityWizard.{getAuthorityWizardPage, submitNewAuthorityRecordForNotification, submitNewAuthorityRecordForRegistration}
 import uk.gov.hmrc.perftests.requests.Registration._
-import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.getNotificationStartPage
+import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.{getNotificationStartPage, getNotificationUploadPage, postNotificationUpload}
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
-import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.getNotificationUploadPage
 
 class Simulation extends PerformanceTestRunner {
 
@@ -80,7 +79,8 @@ class Simulation extends PerformanceTestRunner {
   setup("upload-template", "Upload a new submission template in notification journey")
     .withChainedActions(
       getNotificationStartPage,
-      getNotificationUploadPage
+      getNotificationUploadPage,
+      postNotificationUpload,
     )
 
 

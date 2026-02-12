@@ -45,8 +45,12 @@ object RequestSupport extends ServicesConfiguration {
     "/senior-accounting-officer/registration/business-match/result?journeyId="
 
   val baseSubmissionUrl: String     = baseUrlFor("senior-accounting-officer-submission-frontend")
+  val baseUpScanUrl: String     = baseUrlFor("upscan-proxy")
+
   val notificationStartPageUrl: String = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/start"
   val notificationUploadPageUrl: String = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/upload"
+
+  val upscanProxyUrl: String = s"$baseUpScanUrl/upscan/upload-proxy"
 
   val redirectUrlKey: String                 = "redirectUrl"
   val csrfTokenKey: String                   = "csrfToken"

@@ -22,7 +22,7 @@ import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef._
 import io.gatling.http.Predef.{http, status}
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
-import uk.gov.hmrc.perftests.support.RequestSupport.{notificationStartPageUrl, notificationUploadPageUrl, redirectUrlFromSession, saveCsrfToken, saveUpscanParams}
+import uk.gov.hmrc.perftests.support.RequestSupport.{notificationStartPageUrl, notificationUploadPageUrl, redirectUrlFromSession, saveCsrfToken, saveUpscanParams, upscanParameters, upscanProxyUrl}
 
 object UploadSubmissionTemplate {
 
@@ -37,5 +37,13 @@ object UploadSubmissionTemplate {
       .get(notificationUploadPageUrl)
       .check(status.is(200))
       .check(saveUpscanParams().map(e => checkBuilder2HttpCheck(e)(httpBodyCssCheckMaterializer)): _*)
+  )
+
+  def postNotificationUpload: Seq[ActionBuilder] = convertHttpActionToSeq(
+    http("Post to 'Notification Upload' page")
+      .post(upscanProxyUrl)
+      .formParam("file", "???")
+      .formParamSeq(upscanParameters.map(name => (name, (session: Session) => session(name))))
+      .check(status.is(200))
   )
 }
