@@ -43,7 +43,7 @@ object UploadSubmissionTemplate {
       .formUpload("file", "data/example.csv")
       .formParamSeq(upscanParameters.map(name => (name, (session: Session) => session(name))))
       .check(status.is(303))
-      // TODO : Upload Id and Key or held in the hidden fields from form
+      // TODO : Upload Id and Key are held in the hidden fields on the form
       .check(header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey))
   )
 }
