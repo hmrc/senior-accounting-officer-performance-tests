@@ -19,7 +19,7 @@ package uk.gov.hmrc.perftests.simulations
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityWizard.{getAuthorityWizardPage, submitNewAuthorityRecordForNotification, submitNewAuthorityRecordForRegistration}
 import uk.gov.hmrc.perftests.requests.Registration._
-import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.{getHubPageFromRedirect, getNotificationStartPage, getNotificationUploadPage, getUploadSuccessPage, postNotificationUpload}
+import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.{getNotificationStartPage, getNotificationUploadPage, getUploadSuccessPage, postNotificationUpload}
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
 
 class Simulation extends PerformanceTestRunner {
