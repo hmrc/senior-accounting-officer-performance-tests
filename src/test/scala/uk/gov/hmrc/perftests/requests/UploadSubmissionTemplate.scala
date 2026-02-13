@@ -35,15 +35,20 @@ object UploadSubmissionTemplate {
       .get(notificationUploadPageUrl)
       .check(status.is(200))
       .check(saveUpscanParams().map(e => checkBuilder2HttpCheck(e)(httpBodyCssCheckMaterializer)): _*)
+      .check(saveSuccessActionRedirectUrl())
   )
 
   def postNotificationUpload: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Post to 'Notification Upload' page")
       .post(upscanProxyUrl)
+      .disableFollowRedirect
       .formUpload("file", "data/example.csv")
       .formParamSeq(upscanParameters.map(name => (name, (session: Session) => session(name))))
       .check(status.is(303))
       // TODO : Upload Id and Key are held in the hidden fields on the form
-      .check(header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey))
+//      .check(header(HttpHeaderNames.Location).exists.saveAs(redirectUrlKey))
+      .check(header(HttpHeaderNames.Location).is(successActionRedirectUrlFromSession))
   )
+
+
 }
