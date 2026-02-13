@@ -19,7 +19,7 @@ package uk.gov.hmrc.perftests.simulations
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.AuthorityWizard.{getAuthorityWizardPage, submitNewAuthorityRecordForNotification, submitNewAuthorityRecordForRegistration}
 import uk.gov.hmrc.perftests.requests.Registration._
-import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.{getHubPageFromRedirect, getNotificationStartPage, getNotificationUploadPage, postNotificationUpload}
+import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate.{getHubPageFromRedirect, getNotificationStartPage, getNotificationUploadPage, getUploadSuccessPage, postNotificationUpload}
 import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
 
 class Simulation extends PerformanceTestRunner {
@@ -69,7 +69,6 @@ class Simulation extends PerformanceTestRunner {
       getRegistrationCompletePage
     )
 
-
   setup("create-authority-record-for-notification", "Submit new authority record for notification")
     .withChainedActions(
       getAuthorityWizardPage,
@@ -81,10 +80,8 @@ class Simulation extends PerformanceTestRunner {
       getNotificationStartPage,
       getNotificationUploadPage,
       postNotificationUpload,
-      getHubPageFromRedirect
+      getUploadSuccessPage
     )
-
-
 
   runSimulation()
 }

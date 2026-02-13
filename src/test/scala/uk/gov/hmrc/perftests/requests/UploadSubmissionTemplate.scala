@@ -42,17 +42,16 @@ object UploadSubmissionTemplate {
     http("Post to 'Notification Upload' page")
       .post(upscanProxyUrl)
       .disableFollowRedirect
-      .formParamSeq {session => upscanParameters.map(name => name -> session(name).as[String])}
+      .formParamSeq(session => upscanParameters.map(name => name -> session(name).as[String]))
       .formUpload("file", "data/example.csv")
       .check(status.is(303))
       .check(header(HttpHeaderNames.Location).is(successActionRedirectUrlFromSession))
   )
 
-  def getHubPageFromRedirect: Seq[ActionBuilder] = convertHttpActionToSeq(
-    http("Navigate to 'Hub' page from redirection during template upload")
+  def getUploadSuccessPage: Seq[ActionBuilder] = convertHttpActionToSeq(
+    http("Navigate to 'Upload Success' page")
       .get(session => successActionRedirectUrlFromSession(session))
       .check(status.is(200))
-    // How do we validate we're on the Hub page here?
   )
 
 }

@@ -98,23 +98,6 @@ object RequestSupport extends ServicesConfiguration {
     policy
   )
 
-//    <input type="hidden" name="success_action_redirect" value="http://localhost:10056/senior-accounting-officer?uploadId=2f9dbcb3-c792-4169-83aa-191fe54adde0&amp;key=44de48ff-4f9c-4f19-8667-bfb4ce484a4b"/>
-  //            <input type="hidden" name="x-amz-credential" value="ASIAxxxxxxxxx/20180202/eu-west-2/s3/aws4_request"/>
-  //            <input type="hidden" name="x-amz-meta-upscan-initiate-response" value="2026-02-12T13:48:15.023433Z"/>
-  //            <input type="hidden" name="x-amz-meta-original-filename" value="${filename}"/>
-  //            <input type="hidden" name="x-amz-algorithm" value="AWS4-HMAC-SHA256"/>
-  //            <input type="hidden" name="x-amz-signature" value="xxxx"/>
-  //            <input type="hidden" name="error_action_redirect" value="http://localhost:10056/senior-accounting-officer"/>
-  //            <input type="hidden" name="x-amz-meta-session-id" value="723e6d8c-a351-4c99-b07d-b00258653d2f"/>
-  //            <input type="hidden" name="x-amz-meta-callback-url" value="http://localhost:10058/internal/upscan-callback"/>
-  //            <input type="hidden" name="x-amz-date" value="20260212T134815Z"/>
-  //            <input type="hidden" name="x-amz-meta-upscan-initiate-received" value="2026-02-12T13:48:15.023433Z"/>
-  //            <input type="hidden" name="x-amz-meta-request-id" value="e9d5d22a-bda6-4588-8e90-8538911e6b29"/>
-  //            <input type="hidden" name="key" value="44de48ff-4f9c-4f19-8667-bfb4ce484a4b"/>
-  //            <input type="hidden" name="acl" value="private"/>
-  //            <input type="hidden" name="x-amz-meta-consuming-service" value="senior-accounting-officer-submission-frontend"/>
-  //            <input type="hidden" name="policy" value="eyJjb25kaXRpb25zIjpbWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsMCw0MDk2XV19"/>
-
   def saveUpscanParams(): Seq[CheckBuilder.Final[CssCheckType, NodeSelector]] =
     upscanParameters.map(param => css(s"input[name=$param]", "value").exists.saveAs(param))
 
