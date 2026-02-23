@@ -36,16 +36,20 @@ object UploadSubmissionTemplate {
       .check(status.is(200))
       .check(saveUpscanParams().map(e => checkBuilder2HttpCheck(e)(httpBodyCssCheckMaterializer)): _*)
       .check(saveSuccessActionRedirectUrl())
+      .check(saveFormAction())
   )
 
   def postNotificationUpload: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Post to 'Notification Upload' page")
-      .post(upscanProxyUrl)
+      .post(session => formActionFromSession(session))
       .disableFollowRedirect
       .formParamSeq(session => upscanParameters.map(name => name -> session(name).as[String]))
       .formUpload("file", "data/example.csv")
       .check(status.is(303))
-      .check(header(HttpHeaderNames.Location).is(successActionRedirectUrlFromSession))
+      .check(header(HttpHeaderNames.Location)
+        .transform(removeQueryParametersFromUrl)
+        .is(session => removeQueryParametersFromUrl(successActionRedirectUrlFromSession(session)))
+      )
   )
 
   def getUploadSuccessPage: Seq[ActionBuilder] = convertHttpActionToSeq(

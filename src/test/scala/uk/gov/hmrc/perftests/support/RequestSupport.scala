@@ -62,6 +62,8 @@ object RequestSupport extends ServicesConfiguration {
   val journeyIdKey: String                = "journeyId"
   val journeyIdRegexPattern: String       = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
 
+  val formAction: String = ""
+
   val successActionRedirect: String          = "success_action_redirect"
   val xAmzCredential: String                 = "x-amz-credential"
   val xAmzMetaUpscanInitiateResponse: String = "x-amz-meta-upscan-initiate-response"
@@ -104,7 +106,12 @@ object RequestSupport extends ServicesConfiguration {
   def saveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
     css("input[name=csrfToken]", "value").exists.saveAs(csrfTokenKey)
 
+  def saveFormAction(): CheckBuilder.Final[CssCheckType, NodeSelector] =
+    css("form", "action").exists.saveAs(formAction)
+
   def csrfTokenFromSession(session: Session): String = session(csrfTokenKey).as[String]
+
+  def formActionFromSession(session: Session): String = session(formAction).as[String]
 
   def redirectUrlFromSession(session: Session): String = {
     val redirectUrl = session(redirectUrlKey).as[String]
@@ -128,4 +135,6 @@ object RequestSupport extends ServicesConfiguration {
     css("input[name=success_action_redirect]", "value").exists.saveAs(successActionRedirectUrlKey)
 
   def successActionRedirectUrlFromSession(session: Session): String = session(successActionRedirectUrlKey).as[String]
+
+  def removeQueryParametersFromUrl(url: String): String = url.split("\\?")(0)
 }
