@@ -13,7 +13,7 @@ Start Mongo Docker container following instructions from the [MDTP Handbook](htt
 Start `senior-accounting-officer-acceptance-tests` services as follows:
 
 ```bash
-sm2 --start SAO_ALL
+sm2 --start SAO_ALL UPSCAN_STUB
 ```
 
 Turn off GRS Stub here: http://localhost:10057/senior-accounting-officer/registration/test-only/feature-toggle
@@ -31,19 +31,19 @@ Do **NOT** run a full performance test against staging from your local machine. 
 Run smoke test (locally) as follows:
 
 ```bash
-sbt -Dperftest.runSmokeTest=true -DrunLocal=true gatling:test
+./run_local_smoke.sh
 ```
 
 Run full performance test (locally) as follows:
 
 ```bash
-sbt -DrunLocal=true gatling:test
+./run_local.sh
 ```
 
 Run smoke test (staging) as follows:
 
 ```bash
-sbt -Dperftest.runSmokeTest=true -DrunLocal=false gatling:test
+./run_staging_smoke.sh
 ```
 
 ## Scalafmt

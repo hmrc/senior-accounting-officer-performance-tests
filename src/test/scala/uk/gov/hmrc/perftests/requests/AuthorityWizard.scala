@@ -32,7 +32,7 @@ object AuthorityWizard {
       .check(saveCsrfToken())
   )
 
-  def submitNewAuthorityRecord: Seq[ActionBuilder] = convertHttpActionToSeq(
+  def submitNewAuthorityRecordForRegistration: Seq[ActionBuilder] = convertHttpActionToSeq(
     http("Submit form to create a new authority record")
       .post(authorityWizardPageUrl)
       .disableFollowRedirect
@@ -46,5 +46,21 @@ object AuthorityWizard {
       .formParam(CredentialRole.fieldName, CredentialRole.User.value)
       .check(status.is(303))
       .check(header(HttpHeaderNames.Location).is(registrationPageUrl))
+  )
+
+  def submitNewAuthorityRecordForNotification: Seq[ActionBuilder] = convertHttpActionToSeq(
+    http("Submit form to create a new authority record")
+      .post(authorityWizardPageUrl)
+      .disableFollowRedirect
+      .formParam(csrfTokenKey, session => csrfTokenFromSession(session))
+      .formParam("authorityId", "")
+      .formParam("redirectionUrl", notificationStartPageUrl)
+      .formParam(CredentialStrength.fieldName, CredentialStrength.Strong.value)
+      .formParam(ConfidenceLevel.fieldName, ConfidenceLevel.Cl50.value)
+      .formParam(AffinityGroup.fieldName, _ => AffinityGroup.Organisation.value)
+      .formParam("email", "user@test.com")
+      .formParam(CredentialRole.fieldName, CredentialRole.User.value)
+      .check(status.is(303))
+      .check(header(HttpHeaderNames.Location).is(notificationStartPageUrl))
   )
 }
