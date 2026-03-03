@@ -46,9 +46,10 @@ object UploadSubmissionTemplate {
       .formParamSeq(session => upscanParameters.map(name => name -> session(name).as[String]))
       .formUpload("file", "data/example.csv")
       .check(status.is(303))
-      .check(header(HttpHeaderNames.Location)
-        .transform(removeQueryParametersFromUrl)
-        .is(session => removeQueryParametersFromUrl(successActionRedirectUrlFromSession(session)))
+      .check(
+        header(HttpHeaderNames.Location)
+          .transform(removeQueryParametersFromUrl)
+          .is(session => removeQueryParametersFromUrl(successActionRedirectUrlFromSession(session)))
       )
   )
 

@@ -22,6 +22,6 @@ sealed trait CredentialRole {
 
 object CredentialRole {
   val fieldName: String = "credentialRole"
-  case object User extends CredentialRole { val value = "User" }
+  case object User  extends CredentialRole { val value = "User"          }
   case object Admin extends CredentialRole { val value = "Administrator" }
 }

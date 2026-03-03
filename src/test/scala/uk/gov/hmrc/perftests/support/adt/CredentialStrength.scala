@@ -21,5 +21,5 @@ sealed trait CredentialStrength { def value: String }
 object CredentialStrength {
   val fieldName: String = "credentialStrength"
   case object Strong extends CredentialStrength { val value = "strong" }
-  case object Weak extends CredentialStrength { val value = "weak" }
+  case object Weak   extends CredentialStrength { val value = "weak"   }
 }

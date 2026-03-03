@@ -20,6 +20,6 @@ sealed trait AffinityGroup { def value: String }
 
 object AffinityGroup {
   val fieldName: String = "affinityGroup"
-  case object Individual extends AffinityGroup { val value = "Individual" }
+  case object Individual   extends AffinityGroup { val value = "Individual"   }
   case object Organisation extends AffinityGroup { val value = "Organisation" }
 }
