@@ -20,7 +20,7 @@ sealed trait ConfidenceLevel { def value: String }
 
 object ConfidenceLevel {
   val fieldName: String = "confidenceLevel"
-  case object Cl50 extends ConfidenceLevel { val value = "50" }
+  case object Cl50  extends ConfidenceLevel { val value = "50"  }
   case object Cl200 extends ConfidenceLevel { val value = "200" }
   case object Cl250 extends ConfidenceLevel { val value = "250" }
 }
