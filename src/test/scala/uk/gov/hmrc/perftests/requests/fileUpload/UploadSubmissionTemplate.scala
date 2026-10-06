@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests
+package uk.gov.hmrc.perftests.requests.fileUpload
 
-import io.gatling.core.Predef._
+import io.gatling.core.Predef.*
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.http.Predef._
+import io.gatling.http.Predef.*
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
-import uk.gov.hmrc.perftests.support.RequestSupport._
 
 object UploadSubmissionTemplate {
 
