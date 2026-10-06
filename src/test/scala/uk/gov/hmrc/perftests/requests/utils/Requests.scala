@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef.*
+import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.http.Predef.*
+import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
-import RequestSupport.*
 
-import scala.concurrent.duration.*
+import scala.concurrent.duration._
+
+import RequestSupport._
 
 object Requests extends ServicesConfiguration {
 

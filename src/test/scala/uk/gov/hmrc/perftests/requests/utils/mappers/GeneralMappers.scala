@@ -18,8 +18,8 @@ package uk.gov.hmrc.perftests.requests.utils.mappers
 
 object GeneralMappers {
 
-  val textInput: Map[String, String]   = Map("value" -> "AbCdEfGhI")
-  val numberInput: Map[String, String] = Map("value" -> "456785643")
+  val textInput: Map[String, String]    = Map("value" -> "AbCdEfGhI")
+  val numberInput: Map[String, String]  = Map("value" -> "456785643")
   val emailAddress: Map[String, String] = Map("value" -> "test@gmail.com")
 
   val radioButtonYes: Map[String, String] = Map("value" -> "yes")

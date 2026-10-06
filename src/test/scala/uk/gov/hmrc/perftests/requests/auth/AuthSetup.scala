@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.auth
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.AuthRequests.createAuthority
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport._
+import uk.gov.hmrc.perftests.requests.utils.Requests._
 
 trait AuthSetup {
   self: PerformanceTestRunner =>
@@ -31,9 +31,9 @@ trait AuthSetup {
         createAuthority(authorityRedirectUrl)
       ) ++
         (if (requiresStubEnrolment)
-          Seq(followRedirect("Stub Enrolment", registrationPageUrl))
-        else
-          Seq.empty)
+           Seq(followRedirect("Stub Enrolment", registrationPageUrl))
+         else
+           Seq.empty)
 
     setup("create-authority-record", "Submit new authority record")
       .withActions(actions *)

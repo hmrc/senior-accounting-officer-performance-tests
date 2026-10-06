@@ -16,28 +16,29 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef.*
-import io.gatling.http.Predef.*
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import RequestSupport.*
-import uk.gov.hmrc.perftests.support.adt.*
+import uk.gov.hmrc.perftests.support.adt._
+
+import RequestSupport._
 
 object AuthRequests {
 
   def createAuthority(
-                       redirectionUrl: String
-                     ): HttpRequestBuilder =
+      redirectionUrl: String
+  ): HttpRequestBuilder =
     http("Submit form to create a new authority record")
       .post(authorityWizardPageUrl)
       .disableFollowRedirect
       .formParamMap(
         Map(
-          "authorityId"                 -> "",
-          "redirectionUrl"              -> redirectionUrl,
+          "authorityId"                -> "",
+          "redirectionUrl"             -> redirectionUrl,
           CredentialStrength.fieldName -> CredentialStrength.Strong.value,
           ConfidenceLevel.fieldName    -> ConfidenceLevel.Cl50.value,
           AffinityGroup.fieldName      -> AffinityGroup.Organisation.value,
-          "email"                       -> "user@test.com",
+          "email"                      -> "user@test.com",
           CredentialRole.fieldName     -> CredentialRole.User.value,
           csrfTokenKey                 -> "#{csrfToken}"
         )
@@ -48,4 +49,3 @@ object AuthRequests {
         header(HttpHeaderNames.Location).saveAs(redirectUrlKey)
       )
 }
-

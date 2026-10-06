@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.perftests.requests.fileUpload
 
-import io.gatling.core.Predef.*
+import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.http.Predef.*
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
+import io.gatling.http.Predef._
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport._
 import uk.gov.hmrc.perftests.support.GatlingSupport.convertHttpActionToSeq
 
 object UploadSubmissionTemplate {

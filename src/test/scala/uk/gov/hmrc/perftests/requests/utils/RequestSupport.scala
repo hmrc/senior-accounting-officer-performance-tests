@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef.*
+import io.gatling.core.Predef._
 import io.gatling.core.check.CheckBuilder
 import io.gatling.core.check.css.CssCheckType
 import jodd.lagarto.dom.NodeSelector

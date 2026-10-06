@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef.*
-import io.gatling.http.Predef.*
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
-import RequestSupport.*
+
+import RequestSupport._
 
 object GrsRequests extends ServicesConfiguration {
 
@@ -60,15 +61,15 @@ object GrsRequests extends ServicesConfiguration {
       )
 
   def postGrsPage(
-                   name: String
-                 ): HttpRequestBuilder =
+      name: String
+  ): HttpRequestBuilder =
     http(s"Post $name Page")
       .post(session => redirectUrlFromSession(session))
       .formParamMap(
         Map(
           csrfTokenKey -> "#{csrfToken}",
-          "status" -> "#{grsStatus}",
-          "body" -> "#{grsBody}"
+          "status"     -> "#{grsStatus}",
+          "body"       -> "#{grsBody}"
         )
       )
       .disableFollowRedirect

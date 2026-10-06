@@ -17,10 +17,10 @@
 package uk.gov.hmrc.perftests.requests.registration
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
-import uk.gov.hmrc.perftests.requests.utils.mappers.GeneralMappers.*
-import uk.gov.hmrc.perftests.requests.utils.mappers.RegistrationMappers.*
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport._
+import uk.gov.hmrc.perftests.requests.utils.Requests._
+import uk.gov.hmrc.perftests.requests.utils.mappers.GeneralMappers._
+import uk.gov.hmrc.perftests.requests.utils.mappers.RegistrationMappers._
 
 trait RegistrationContactDetails {
 
@@ -37,7 +37,7 @@ trait RegistrationContactDetails {
       getPage("First Contact Email", addFirstContactEmailUrl),
       postPage("First Contact Email", addFirstContactEmailUrl, addAnotherContactPageUrl, emailAddress),
 
-      getPage("Add Another Contact",addAnotherContactPageUrl),
+      getPage("Add Another Contact", addAnotherContactPageUrl),
       postPage("Add Another Contact", addAnotherContactPageUrl, addSecondContactNameUrl, radioButtonYes),
 
       getPage("Second Contact Name", addSecondContactNameUrl),
