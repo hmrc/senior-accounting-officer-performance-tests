@@ -18,10 +18,8 @@ package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.*
-import uk.gov.hmrc.perftests.requests.fileUpload.UploadSubmissionTemplate.*
 import uk.gov.hmrc.perftests.requests.auth.AuthSetup
 import uk.gov.hmrc.perftests.requests.registration.{GrsSetup, RegistrationContactDetails, RegistrationSubmission}
-import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
 
 class Simulation
     extends PerformanceTestRunner
