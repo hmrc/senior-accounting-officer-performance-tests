@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.perftests.requests.utils.mappers
 
-object GeneralMappers {
+object CommonMappers {
 
   val textInput: Map[String, String]    = Map("value" -> "AbCdEfGhI")
   val numberInput: Map[String, String]  = Map("value" -> "456785643")
