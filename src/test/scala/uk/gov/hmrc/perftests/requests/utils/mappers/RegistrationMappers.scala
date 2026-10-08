@@ -20,9 +20,9 @@ object RegistrationMappers {
 
   val contactDetails: Map[String, String] =
     Map(
-      "contacts[0].name"  -> "AbCdEfGhI",
-      "contacts[0].email" -> "test@gmail.com",
-      "contacts[1].name"  -> "AbCdEfGhI",
-      "contacts[1].email" -> "test@gmail.com"
+      "contacts[0].name"  -> "Test User 1",
+      "contacts[0].email" -> "test1@gmail.com",
+      "contacts[1].name"  -> "Test User 2",
+      "contacts[1].email" -> "test2@gmail.com"
     )
 }
