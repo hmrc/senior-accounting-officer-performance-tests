@@ -24,4 +24,25 @@ object CommonMappers {
 
   val radioButtonYes: Map[String, String] = Map("value" -> "yes")
   val radioButtonNo: Map[String, String]  = Map("value" -> "no")
+
+  val radioButtonTrue: Map[String, String] = Map("value" -> "true")
+  val radioButtonFalse: Map[String, String]  = Map("value" -> "false")
+
+  val radioButtonNotification: Map[String, String] = Map("value" -> "notification")
+  val radioButtonCertificate: Map[String, String]  = Map("value" -> "certificate")
+
+  def dateInput(day: String, month: String, year: String): Map[String, String] =
+    Map(
+      "value.day"   -> day,
+      "value.month" -> month,
+      "value.year"  -> year
+    )
+
+  val currentSaoStartDate: Map[String, String] = dateInput( "1", "9", "2026")
+  val previousSaoStartDate: Map[String, String] = dateInput( "1", "1", "2026")
+  val previousSaoEndDate: Map[String, String] = dateInput( "31", "8", "2026")
+
+
+
+
 }

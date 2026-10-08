@@ -16,15 +16,14 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef._
+import io.gatling.core.Predef.*
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.http.Predef._
+import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 
-import scala.concurrent.duration._
-
-import RequestSupport._
+import scala.concurrent.duration.*
 
 object Requests extends ServicesConfiguration {
 
@@ -49,18 +48,16 @@ object Requests extends ServicesConfiguration {
 
   def getPageFromRedirect(
       name: String,
+      baseUrl: String,
       saveToken: Boolean = false
   ): HttpRequestBuilder = {
     val request =
       http(s"Get $name Page")
-        .get(session => redirectUrlFromSession(session))
+        .get(session => redirectUrlFromSession(session, baseUrl))
         .check(status.is(200))
 
-    if (saveToken) {
-      request.check(saveCsrfToken())
-    } else {
-      request
-    }
+    if (saveToken) request.check(saveCsrfToken())
+    else request
   }
 
   def followRedirect(
@@ -98,4 +95,25 @@ object Requests extends ServicesConfiguration {
       nextPage: String
   ): HttpRequestBuilder =
     postPage(name, currentPage, nextPage, Map.empty)
+
+  def postPageWithQueryRedirect(
+      name: String,
+      currentPage: String,
+      nextPage: String,
+      formParams: Map[String, String] = Map.empty
+  ): HttpRequestBuilder =
+    http(s"Post $name Page")
+      .post(currentPage)
+      .formParamMap(formParams + (csrfTokenKey -> "#{csrfToken}"))
+      .disableFollowRedirect
+      .check(status.is(303))
+      .check(
+        header(HttpHeaderNames.Location)
+          .saveAs(redirectUrlKey)
+      )
+      .check(
+        header(HttpHeaderNames.Location)
+          .transform(removeQueryParametersFromUrl)
+          .is(extractRelativeUrl(nextPage))
+      )
 }

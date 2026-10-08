@@ -16,16 +16,43 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef._
+import io.gatling.core.Predef.*
 import io.gatling.core.check.CheckBuilder
 import io.gatling.core.check.css.CssCheckType
 import jodd.lagarto.dom.NodeSelector
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object RequestSupport extends ServicesConfiguration {
-  val authBaseUrl: String                    = baseUrlFor("auth-login-stub")
-  val baseRegistrationUrl: String            = baseUrlFor("senior-accounting-officer-registration-frontend")
-  val authorityWizardPageUrl: String         = s"$authBaseUrl/auth-login-stub/gg-sign-in"
+  val baseAuthUrl: String         = baseUrlFor("auth-login-stub")
+  val baseSaoHubUrl: String       = baseUrlFor("senior-accounting-officer-hub-frontend")
+  val baseRegistrationUrl: String = baseUrlFor("senior-accounting-officer-registration-frontend")
+  val baseSubmissionUrl: String   = baseUrlFor("senior-accounting-officer-submission-frontend")
+
+  val authorityWizardPageUrl: String = s"$baseAuthUrl/auth-login-stub/gg-sign-in"
+  val saoLandingPage: String         = s"$baseSaoHubUrl/senior-accounting-officer"
+
+  val submission: String     = s"$baseSubmissionUrl/senior-accounting-officer/submission"
+  val submissionType: String = s"$submission/submission-type"
+
+  val notification: String                         = s"$submission/notification"
+  val notificationHome: String                     = s"$notification/start"
+  val notificationMoreThanOne: String              = s"$notification/more-than-one-sao"
+  val notificationOneSao: String                   = s"$notification/one-sao"
+  val notificationOneFullName: String              = s"$notificationOneSao/submit-notification-full-name"
+  val notificationMoreSao: String                  = s"$notification/more-sao"
+  val notificationMoreCurrentSaoName: String       = s"$notificationMoreSao/submit-notification-full-name"
+  val notificationMoreCurrentSaoStartDate: String  = s"$notificationMoreSao/submit-notification-first-start-date"
+  val notificationMorePreviousSaoName: String      = s"$notification/who-was-the-sao-before"
+  val notificationMorePreviousSaoStartDate: String = s"$notification/multi-sao-second-start-date"
+  val notificationMorePreviousSaoEndDate: String   = s"$submission/notificationMoreSaoSecondEndDate"
+  val notificationMoreAllAdded: String             = s"$notificationMoreSao/are-all-added"
+  val notificationUpload: String                   = s"$notification/upload"
+  val notificationUploadTable: String              = s"$notificationUpload/table"
+  val notificationAdditionalInfo: String           = s"$notification/additional-information"
+  val notificationConfirm: String                  = s"$notification/confirm-your-notification"
+  val notificationCheckYourAnswers: String         = s"$notification/check-your-answers"
+  val notificationConfirmation: String             = s"$notification/confirmation"
+
   val registrationPageUrl: String            = s"$baseRegistrationUrl/senior-accounting-officer/registration"
   val stubEnrolmentPageUrl: String           = s"$registrationPageUrl/test-only/stub-enrolment"
   val registrationCompletePageUrl: String    = s"$registrationPageUrl/registration-complete"
@@ -45,64 +72,19 @@ object RequestSupport extends ServicesConfiguration {
   val businessMatchResultPathSegment: String =
     "/senior-accounting-officer/registration/business-match/result?journeyId="
 
-  val baseSubmissionUrl: String = baseUrlFor("senior-accounting-officer-submission-frontend")
-  val baseUpScanUrl: String     = baseUrlFor("upscan-proxy")
-
   val notificationStartPageUrl: String  = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/start"
   val notificationUploadPageUrl: String = s"$baseSubmissionUrl/senior-accounting-officer/submission/notification/upload"
 
-  val upscanProxyUrl: String = s"$baseUpScanUrl/upscan/upload-proxy"
-
-  val redirectUrlKey: String              = "redirectUrl"
-  val csrfTokenKey: String                = "csrfToken"
-  val successActionRedirectUrlKey: String = "successActionRedirectUrl"
-  val mdtpCookieKey: String               = "mdtpCookie"
-  val mdtpdiCookieKey: String             = "mdtpdiCookie"
-  val mdtpCookieValue: String             = "mdtp=${mdtpCookie}"
-  val mdtpdiCookieValue: String           = "mdtpdi=${mdtpdiCookie}"
-  val journeyIdKey: String                = "journeyId"
-  val journeyIdRegexPattern: String       = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+  val redirectUrlKey: String        = "redirectUrl"
+  val csrfTokenKey: String          = "csrfToken"
+  val mdtpCookieKey: String         = "mdtpCookie"
+  val mdtpdiCookieKey: String       = "mdtpdiCookie"
+  val mdtpCookieValue: String       = "mdtp=${mdtpCookie}"
+  val mdtpdiCookieValue: String     = "mdtpdi=${mdtpdiCookie}"
+  val journeyIdKey: String          = "journeyId"
+  val journeyIdRegexPattern: String = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
 
   val formAction: String = ""
-
-  val successActionRedirect: String          = "success_action_redirect"
-  val xAmzCredential: String                 = "x-amz-credential"
-  val xAmzMetaUpscanInitiateResponse: String = "x-amz-meta-upscan-initiate-response"
-  val xAmzMetaOriginalFilename: String       = "x-amz-meta-original-filename"
-  val xAmzAlgorithm: String                  = "x-amz-algorithm"
-  val xAmzSignature: String                  = "x-amz-signature"
-  val errorActionRedirect: String            = "error_action_redirect"
-  val xAmzMetaSessionId: String              = "x-amz-meta-session-id"
-  val xAmzMetaCallbackUrl: String            = "x-amz-meta-callback-url"
-  val xAmzDate: String                       = "x-amz-date"
-  val xAmzMetaUpscanInitiateReceived: String = "x-amz-meta-upscan-initiate-received"
-  val xAmzMetaRequestId: String              = "x-amz-meta-request-id"
-  val key: String                            = "key"
-  val acl: String                            = "acl"
-  val xAmzMetaConsumingService: String       = "x-amz-meta-consuming-service"
-  val policy: String                         = "policy"
-
-  val upscanParameters: List[String] = List(
-    successActionRedirect,
-    xAmzCredential,
-    xAmzMetaUpscanInitiateResponse,
-    xAmzMetaOriginalFilename,
-    xAmzAlgorithm,
-    xAmzSignature,
-    errorActionRedirect,
-    xAmzMetaSessionId,
-    xAmzMetaCallbackUrl,
-    xAmzDate,
-    xAmzMetaUpscanInitiateReceived,
-    xAmzMetaRequestId,
-    key,
-    acl,
-    xAmzMetaConsumingService,
-    policy
-  )
-
-  def saveUpscanParams(): Seq[CheckBuilder.Final[CssCheckType, NodeSelector]] =
-    upscanParameters.map(param => css(s"input[name=$param]", "value").exists.saveAs(param))
 
   def saveCsrfToken(): CheckBuilder.Final[CssCheckType, NodeSelector] =
     css("input[name=csrfToken]", "value").exists.saveAs(csrfTokenKey)
@@ -114,11 +96,17 @@ object RequestSupport extends ServicesConfiguration {
 
   def formActionFromSession(session: Session): String = session(formAction).as[String]
 
-  def redirectUrlFromSession(session: Session): String = {
+  def redirectUrlFromSession(
+      session: Session,
+      baseUrl: String = baseRegistrationUrl
+  ): String = {
     val redirectUrl = session(redirectUrlKey).as[String]
+
     if (redirectUrl.startsWith("http")) {
       redirectUrl
-    } else s"$baseRegistrationUrl$redirectUrl"
+    } else {
+      s"$baseUrl$redirectUrl"
+    }
   }
 
   def businessMatchWithJourneyIdUrl(session: Session): String =
@@ -132,14 +120,10 @@ object RequestSupport extends ServicesConfiguration {
     s"${uri.getPath}$query"
   }
 
-  def saveSuccessActionRedirectUrl(): CheckBuilder.Final[CssCheckType, NodeSelector] =
-    css("input[name=success_action_redirect]", "value").exists.saveAs(successActionRedirectUrlKey)
-
-  def successActionRedirectUrlFromSession(session: Session): String = session(successActionRedirectUrlKey).as[String]
-
-  def removeQueryParametersFromUrl(url: String): String = url.split("\\?")(0)
-
   val authorityRedirectUrl: String = if (runLocal) stubEnrolmentPageUrl else registrationPageUrl
 
   val requiresStubEnrolment: Boolean = runLocal
+
+  def removeQueryParametersFromUrl(url: String): String =
+    url.split("\\?")(0)
 }

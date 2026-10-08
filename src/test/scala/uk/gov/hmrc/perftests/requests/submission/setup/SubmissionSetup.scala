@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.registration
+package uk.gov.hmrc.perftests.requests.submission.setup
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.GrsRequests.*
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
 
-trait GrsSetup {
-
+trait SubmissionSetup {
   self: PerformanceTestRunner =>
 
-  def grsSetup(): Unit =
-    setup("grs-setup", "GRS Setup") withActions (
-      getPage("Registration", registrationPageUrl),
-      getGrsRedirect("Business Match", businessMatchUrl),
-      getGrsPage("GRS Business Match"),
-      postGrsPage("GRS Business Match"),
-      followRedirect("Business Match Result", registrationPageUrl),
-      getPageFromRedirect("Registration: Complete", baseRegistrationUrl)
-    )
+//  def notificationSaoDetails(): Unit =
+//    setup("submission-setup", "Submission Setup") withActions(
+//getPage("Submission Home", saoLandingPage),
+//      
+//      getPage("Submission Type", submissionType),
+//      postPage("Submission Type", submissionType, )
+//
+//    )
 }

@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.auth
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.AuthRequests.createAuthority
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport._
-import uk.gov.hmrc.perftests.requests.utils.Requests._
+import uk.gov.hmrc.perftests.requests.utils.AuthRequests.*
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.Requests.*
 
 trait AuthSetup {
   self: PerformanceTestRunner =>
@@ -38,4 +38,15 @@ trait AuthSetup {
     setup("create-authority-record", "Submit new authority record")
       .withActions(actions *)
   }
+
+  def createEnrolledAuthorityRecord(
+      subscriptionId: String = "XMPLR0123456789"
+  ): Unit =
+    setup(
+      "create-enrolled-authority-record",
+      "Submit new enrolled authority record"
+    ) withActions (
+      getPage("Authority Wizard", authorityWizardPageUrl, saveToken = true),
+      createEnrolledAuthority(saoLandingPage, subscriptionId)
+    )
 }
