@@ -17,75 +17,21 @@
 package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.AuthorityWizard.{
-  getAuthorityWizardPage,
-  submitNewAuthorityRecordForNotification,
-  submitNewAuthorityRecordForRegistration
-}
-import uk.gov.hmrc.perftests.requests.Registration._
-import uk.gov.hmrc.perftests.requests.UploadSubmissionTemplate._
-import uk.gov.hmrc.perftests.support.GatlingSupport.AugmentJourneyParts
+import uk.gov.hmrc.perftests.requests._
+import uk.gov.hmrc.perftests.requests.auth.AuthSetup
+import uk.gov.hmrc.perftests.requests.registration.{GrsSetup, RegistrationContactDetails, RegistrationSubmission}
 
-class Simulation extends PerformanceTestRunner {
+class Simulation
+    extends PerformanceTestRunner
+    with AuthSetup
+    with GrsSetup
+    with RegistrationContactDetails
+    with RegistrationSubmission {
 
-  setup("create-authority-record", "Submit new authority record")
-    .withChainedActions(
-      getAuthorityWizardPage,
-      submitNewAuthorityRecordForRegistration
-    )
-
-  setup("grs-setup", "GRS Setup")
-    .withChainedActions(
-      getRegistrationPage,
-      getGenericRegistrationServiceStubBeforeRedirect,
-      getGenericRegistrationServiceStubAfterRedirect,
-      sendResponseWithCompanyDetailsBeforeRedirect,
-      getInterimRedirectToRegistrationPage,
-      getRegistrationPageWithCompleteCompanyDetails
-    )
-
-  setup("registration-first-contact", "Registration First Contact")
-    .withChainedActions(
-      getContactDetailsPage,
-      postContactDetailsPage,
-      getAddFirstContactNamePage,
-      postAddFirstContactNamePage,
-      getAddFirstContactEmailPage,
-      postAddFirstContactEmailPage
-    )
-
-  setup("registration-second-contact", "Registration Second Contact")
-    .withChainedActions(
-      getAddAnotherContactPage,
-      postAddAnotherContactPage,
-      getAddSecondContactNamePage,
-      postAddSecondContactNamePage,
-      getAddSecondContactEmailPage,
-      postAddSecondContactEmailPage,
-      getCheckYourAnswersPage,
-      postCheckYourAnswersPage
-    )
-
-  setup("submit-registration", "Registration Submit")
-    .withChainedActions(
-      getRegistrationPage,
-      postRegistrationPage,
-      getRegistrationCompletePage
-    )
-
-  setup("create-authority-record-for-notification", "Submit new authority record for notification")
-    .withChainedActions(
-      getAuthorityWizardPage,
-      submitNewAuthorityRecordForNotification
-    )
-
-  setup("upload-template", "Upload a new submission template in notification journey")
-    .withChainedActions(
-      getNotificationStartPage,
-      getNotificationUploadPage,
-      postNotificationUpload,
-      getUploadSuccessPage
-    )
+  createAuthorityRecord()
+  grsSetup()
+  registrationContactDetails()
+  registrationSubmission()
 
   runSimulation()
 }

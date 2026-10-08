@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.support
+package uk.gov.hmrc.perftests.requests.utils
 
 import io.gatling.core.Predef._
 import io.gatling.core.check.CheckBuilder
@@ -27,6 +27,7 @@ object RequestSupport extends ServicesConfiguration {
   val baseRegistrationUrl: String            = baseUrlFor("senior-accounting-officer-registration-frontend")
   val authorityWizardPageUrl: String         = s"$authBaseUrl/auth-login-stub/gg-sign-in"
   val registrationPageUrl: String            = s"$baseRegistrationUrl/senior-accounting-officer/registration"
+  val stubEnrolmentPageUrl: String           = s"$registrationPageUrl/test-only/stub-enrolment"
   val registrationCompletePageUrl: String    = s"$registrationPageUrl/registration-complete"
   val businessMatchUrl: String               = s"$registrationPageUrl/business-match"
   val contactDetailsPageUrl: String          = s"$registrationPageUrl/contact-details"
@@ -137,4 +138,8 @@ object RequestSupport extends ServicesConfiguration {
   def successActionRedirectUrlFromSession(session: Session): String = session(successActionRedirectUrlKey).as[String]
 
   def removeQueryParametersFromUrl(url: String): String = url.split("\\?")(0)
+
+  val authorityRedirectUrl: String = if (runLocal) stubEnrolmentPageUrl else registrationPageUrl
+
+  val requiresStubEnrolment: Boolean = runLocal
 }
