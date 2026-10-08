@@ -24,7 +24,7 @@ trait RegistrationSubmission {
   self: PerformanceTestRunner =>
 
   def registrationSubmission(): Unit =
-    setup("submit-registration", "Registration Submit") withActions (
+    setup("submit-registration", "Registration: Submit") withActions (
       getPage("Registration", registrationPageUrl),
       postPage("Registration", registrationPageUrl, registrationCompletePageUrl)
 

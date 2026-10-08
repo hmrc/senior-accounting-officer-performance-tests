@@ -35,7 +35,7 @@ trait AuthSetup {
          else
            Seq.empty)
 
-    setup("create-authority-record", "Submit new authority record")
+    setup("create-authority-record", "Auth: Submit new authority record")
       .withActions(actions *)
   }
 
@@ -44,7 +44,7 @@ trait AuthSetup {
   ): Unit =
     setup(
       "create-enrolled-authority-record",
-      "Submit new enrolled authority record"
+      "Auth: Submit new enrolled authority record"
     ) withActions (
       getPage("Authority Wizard", authorityWizardPageUrl, saveToken = true),
       createEnrolledAuthority(saoLandingPage, subscriptionId)

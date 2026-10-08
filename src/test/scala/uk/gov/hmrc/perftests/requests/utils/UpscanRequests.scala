@@ -69,7 +69,7 @@ object UpscanRequests {
       )
 
   def getUploadTableRedirect: HttpRequestBuilder =
-    http("Get Notification: Upload Table")
+    http("Get Upload Table")
       .get(notificationUploadTable)
       .disableFollowRedirect
       .check(status.is(303))

@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.submission.setup
+package uk.gov.hmrc.perftests.requests.submission.notification
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
 
-trait SubmissionSetup {
+trait NotificationUpload {
   self: PerformanceTestRunner =>
 
-//  def notificationSaoDetails(): Unit =
-//    setup("submission-setup", "Submission Setup") withActions(
-//getPage("Submission Home", saoLandingPage),
-//      
-//      getPage("Submission Type", submissionType),
-//      postPage("Submission Type", submissionType, )
-//
-//    )
+  def notificationUpload(): Unit =
+    setup("notification-upload", "Notification: Upload") withActions (
+      getPage("Home", notificationHome),
+
+      getUploadPage,
+      uploadFile,
+      getUploadSuccessPage,
+      pause(1),
+      followUploadSuccessRedirect,
+
+      getPage("Upload Table", notificationUploadTable),
+      postPage("Upload Table", notificationUploadTable, notificationHome)
+    )
 }

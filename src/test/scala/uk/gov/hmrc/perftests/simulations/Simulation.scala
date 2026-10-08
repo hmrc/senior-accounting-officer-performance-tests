@@ -26,7 +26,10 @@ class Simulation
     extends PerformanceTestRunner
     with AuthSetup
     with GrsSetup
-    with NotificationDetails
+    with NotificationSaoDetails
+    with NotificationSetup
+    with NotificationSubmission
+    with NotificationUpload
     with RegistrationContactDetails
     with RegistrationSubmission {
 
@@ -34,6 +37,9 @@ class Simulation
   createEnrolledAuthorityRecord()
   grsSetup()
   notificationSaoDetails()
+  notificationSetup()
+  notificationSubmission()
+  notificationUpload()
   registrationContactDetails()
   registrationSubmission()
 
