@@ -17,8 +17,8 @@
 package uk.gov.hmrc.perftests.requests.registration
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport._
-import uk.gov.hmrc.perftests.requests.utils.Requests._
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.Requests.*
 
 trait RegistrationSubmission {
   self: PerformanceTestRunner =>

@@ -20,7 +20,6 @@ import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
 import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
-import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
 
 trait NotificationUpload {
   self: PerformanceTestRunner =>

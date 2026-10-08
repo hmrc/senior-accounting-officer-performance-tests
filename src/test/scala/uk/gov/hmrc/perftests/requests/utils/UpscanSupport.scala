@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
+import io.gatling.core.Predef.*
 import io.gatling.core.check.CheckBuilder
 import io.gatling.core.check.css.CssCheckType
-import io.gatling.core.Predef.*
 import jodd.lagarto.dom.NodeSelector
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
@@ -68,13 +68,10 @@ object UpscanSupport extends ServicesConfiguration {
   )
 
   def saveUpscanParams(): Seq[CheckBuilder.Final[CssCheckType, NodeSelector]] =
-    upscanParameters.map(param =>
-      css(s"input[name=$param]", "value").exists.saveAs(param)
-    )
+    upscanParameters.map(param => css(s"input[name=$param]", "value").exists.saveAs(param))
 
   def saveSuccessActionRedirectUrl(): CheckBuilder.Final[CssCheckType, NodeSelector] =
-    css("input[name=success_action_redirect]", "value")
-      .exists
+    css("input[name=success_action_redirect]", "value").exists
       .saveAs(successActionRedirectUrlKey)
 
   def successActionRedirectUrlFromSession(session: Session): String =
