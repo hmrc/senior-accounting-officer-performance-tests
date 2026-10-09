@@ -33,17 +33,29 @@ object Requests extends ServicesConfiguration {
   def getPage(
       name: String,
       page: String,
-      saveToken: Boolean = false
+      saveToken: Boolean = false,
+      saveSubmissionToken: Boolean = false
   ): HttpRequestBuilder = {
+    val request = http(s"Get $name Page")
+      .get(page)
+      .check(status.is(200))
 
-    val request =
-      http(s"Get $name Page")
-        .get(page)
-        .check(status.is(200))
+    val withCsrf = if (saveToken) {
+      request.check(
+        css("input[name='csrfToken']", "value").saveAs("csrfToken")
+      )
+    } else {
+      request
+    }
 
-    if (saveToken)
-      request.check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
-    else request
+    if (saveSubmissionToken) {
+      withCsrf.check(
+        css("input[name='certificateSubmissionToken']", "value")
+          .saveAs("certificateSubmissionToken")
+      )
+    } else {
+      withCsrf
+    }
   }
 
   def getPageFromRedirect(
@@ -59,6 +71,49 @@ object Requests extends ServicesConfiguration {
     if (saveToken) request.check(saveCsrfToken())
     else request
   }
+
+  def getPageWithQueryRedirect(
+      name: String,
+      page: String,
+      nextPage: String
+  ): HttpRequestBuilder =
+    http(s"Get $name Page")
+      .get(page)
+      .disableFollowRedirect
+      .check(status.is(303))
+      .check(
+        header(HttpHeaderNames.Location)
+          .saveAs(redirectUrlKey)
+      )
+      .check(
+        header(HttpHeaderNames.Location)
+          .transform(removeQueryParametersFromUrl)
+          .is(extractRelativeUrl(nextPage))
+      )
+
+  def postTaskList: HttpRequestBuilder =
+    http("Post Task List Page")
+      .post { session =>
+        val redirectUrl = session(redirectUrlKey).as[String]
+        val reference = java.net.URI
+          .create(redirectUrl)
+          .getRawQuery
+          .split("&")
+          .find(_.startsWith("certificateReference="))
+          .map(_.stripPrefix("certificateReference="))
+          .getOrElse(throw new IllegalStateException("Missing certificateReference"))
+
+        s"$certificateTaskList?certificateReference=$reference"
+      }
+      .formParamMap(Map(csrfTokenKey -> "#{csrfToken}"))
+      .disableFollowRedirect
+      .check(status.is(303))
+      .check(header(HttpHeaderNames.Location).saveAs(redirectUrlKey))
+      .check(
+        header(HttpHeaderNames.Location)
+          .transform(removeQueryParametersFromUrl)
+          .is(extractRelativeUrl(certificateConfirmation))
+      )
 
   def followRedirect(
       name: String,

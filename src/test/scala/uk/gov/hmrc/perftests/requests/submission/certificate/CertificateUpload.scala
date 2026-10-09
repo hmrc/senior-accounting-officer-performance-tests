@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.submission.notification
+package uk.gov.hmrc.perftests.requests.submission.certificate
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
 import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
 
-trait NotificationUpload {
+trait CertificateUpload {
   self: PerformanceTestRunner =>
 
-  def notificationUpload(): Unit =
-    setup("notification-upload", "Notification: Upload") withActions (
-      getPage("Home", notificationHome),
+  def certificateUpload(): Unit =
+    setup("certificate-upload", "Certificate: Upload") withActions (
+      getPage("Home", certificateHome2),
 
-      getUploadPage(notificationUploadFile),
+      getUploadPage(certificateUploadFile),
       uploadFile,
-      getUploadSuccessPage,
-      pause(1),
-      followUploadSuccessRedirect(notificationUploadTable),
+      pause(10),
+      followUploadSuccessRedirect(certificateReviewQualified),
 
-      getPage("Upload Table", notificationUploadTable),
-      postPage("Upload Table", notificationUploadTable, notificationHome)
+      getPage("Review Qualified", certificateReviewQualified),
+      postPage("Review Qualified", certificateReviewQualified, certificateReviewUnqualified),
+
+      getPage("Review Unqualified", certificateReviewUnqualified),
+      postPage("Review Unqualified", certificateReviewUnqualified, certificateHome3)
     )
 }
