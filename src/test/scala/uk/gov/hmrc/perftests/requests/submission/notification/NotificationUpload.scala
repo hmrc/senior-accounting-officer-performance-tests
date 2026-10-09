@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.registration
+package uk.gov.hmrc.perftests.requests.submission.notification
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
 
-trait RegistrationSubmission {
+trait NotificationUpload {
   self: PerformanceTestRunner =>
 
-  def registrationSubmission(): Unit =
-    setup("submit-registration", "Registration: Submit") withActions (
-      getPage("Registration", registrationPageUrl),
-      postPage("Registration", registrationPageUrl, registrationCompletePageUrl)
+  def notificationUpload(): Unit =
+    setup("notification-upload", "Notification: Upload") withActions (
+      getPage("Home", notificationHome),
 
-      // TODO Re-enable once successful registration creates an active
-      // HMRC-DSAO-ORG enrolment in staging.
-      // getPage("Registration Complete", registrationCompletePageUrl)
+      getUploadPage,
+      uploadFile,
+      getUploadSuccessPage,
+      pause(1),
+      followUploadSuccessRedirect,
+
+      getPage("Upload Table", notificationUploadTable),
+      postPage("Upload Table", notificationUploadTable, notificationHome)
     )
 }

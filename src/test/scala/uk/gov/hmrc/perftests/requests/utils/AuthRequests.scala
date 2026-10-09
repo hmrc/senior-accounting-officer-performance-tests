@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.perftests.requests.utils
 
-import io.gatling.core.Predef._
-import io.gatling.http.Predef._
+import io.gatling.core.Predef.*
+import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.support.adt._
-
-import RequestSupport._
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
+import uk.gov.hmrc.perftests.support.adt.*
 
 object AuthRequests {
 
@@ -41,6 +40,35 @@ object AuthRequests {
           "email"                      -> "user@test.com",
           CredentialRole.fieldName     -> CredentialRole.User.value,
           csrfTokenKey                 -> "#{csrfToken}"
+        )
+      )
+      .check(status.is(303))
+      .check(
+        header(HttpHeaderNames.Location).is(redirectionUrl),
+        header(HttpHeaderNames.Location).saveAs(redirectUrlKey)
+      )
+
+  def createEnrolledAuthority(
+      redirectionUrl: String,
+      subscriptionId: String
+  ): HttpRequestBuilder =
+    http("Submit form to create an enrolled authority record")
+      .post(authorityWizardPageUrl)
+      .disableFollowRedirect
+      .formParamMap(
+        Map(
+          "authorityId"                         -> "",
+          "redirectionUrl"                      -> redirectionUrl,
+          CredentialStrength.fieldName          -> CredentialStrength.Strong.value,
+          ConfidenceLevel.fieldName             -> ConfidenceLevel.Cl50.value,
+          AffinityGroup.fieldName               -> AffinityGroup.Organisation.value,
+          "email"                               -> "user@test.com",
+          CredentialRole.fieldName              -> CredentialRole.User.value,
+          "enrolment[0].name"                   -> "HMRC-DSAO-ORG",
+          "enrolment[0].taxIdentifier[0].name"  -> "EtmpSubscriptionId",
+          "enrolment[0].taxIdentifier[0].value" -> subscriptionId,
+          "enrolment[0].state"                  -> "Activated",
+          csrfTokenKey                          -> "#{csrfToken}"
         )
       )
       .check(status.is(303))

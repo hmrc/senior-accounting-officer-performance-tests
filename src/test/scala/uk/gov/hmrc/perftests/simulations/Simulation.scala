@@ -17,19 +17,29 @@
 package uk.gov.hmrc.perftests.simulations
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests._
+import uk.gov.hmrc.perftests.requests.*
 import uk.gov.hmrc.perftests.requests.auth.AuthSetup
-import uk.gov.hmrc.perftests.requests.registration.{GrsSetup, RegistrationContactDetails, RegistrationSubmission}
+import uk.gov.hmrc.perftests.requests.registration.*
+import uk.gov.hmrc.perftests.requests.submission.notification.*
 
 class Simulation
     extends PerformanceTestRunner
     with AuthSetup
     with GrsSetup
+    with NotificationSaoDetails
+    with NotificationSetup
+    with NotificationSubmission
+    with NotificationUpload
     with RegistrationContactDetails
     with RegistrationSubmission {
 
   createAuthorityRecord()
+  createEnrolledAuthorityRecord()
   grsSetup()
+  notificationSaoDetails()
+  notificationSetup()
+  notificationSubmission()
+  notificationUpload()
   registrationContactDetails()
   registrationSubmission()
 
