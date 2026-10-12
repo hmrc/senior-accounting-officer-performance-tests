@@ -28,11 +28,11 @@ trait NotificationUpload {
     setup("notification-upload", "Notification: Upload") withActions (
       getPage("Home", notificationHome),
 
-      getUploadPage,
+      getUploadPage(notificationUploadFile),
       uploadFile,
       getUploadSuccessPage,
       pause(1),
-      followUploadSuccessRedirect,
+      followUploadSuccessRedirect(notificationUploadTable),
 
       getPage("Upload Table", notificationUploadTable),
       postPage("Upload Table", notificationUploadTable, notificationHome)

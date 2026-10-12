@@ -24,9 +24,9 @@ import uk.gov.hmrc.perftests.requests.utils.UpscanSupport.*
 
 object UpscanRequests {
 
-  def getUploadPage: HttpRequestBuilder =
-    http("Get Notification Upload Page")
-      .get(notificationUpload)
+  def getUploadPage(url: String): HttpRequestBuilder =
+    http("Get Upload Page")
+      .get(url)
       .check(status.is(200))
       .check(
         saveUpscanParams()
@@ -36,7 +36,7 @@ object UpscanRequests {
       .check(saveFormAction())
 
   def uploadFile: HttpRequestBuilder =
-    http("Upload Notification File")
+    http("Upload File")
       .post(session => formActionFromSession(session))
       .disableFollowRedirect
       .formParamSeq(session => upscanParameters.map(name => name -> session(name).as[String]))
@@ -57,7 +57,7 @@ object UpscanRequests {
       .get(session => successActionRedirectUrlFromSession(session))
       .check(status.is(200))
 
-  def followUploadSuccessRedirect: HttpRequestBuilder =
+  def followUploadSuccessRedirect(url: String): HttpRequestBuilder =
     http("Poll Upload Success")
       .get(session => successActionRedirectUrlFromSession(session))
       .disableFollowRedirect
@@ -65,7 +65,7 @@ object UpscanRequests {
       .check(
         header(HttpHeaderNames.Location)
           .transform(extractRelativeUrl)
-          .is(extractRelativeUrl(notificationUploadTable))
+          .is(extractRelativeUrl(url))
       )
 
   def getUploadTableRedirect: HttpRequestBuilder =
