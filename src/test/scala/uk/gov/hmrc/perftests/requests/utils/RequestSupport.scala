@@ -72,6 +72,7 @@ object RequestSupport extends ServicesConfiguration {
   val certificateConfirmation: String      = s"$submission/certificate-confirmation"
 
   val registrationPageUrl: String            = s"$baseRegistrationUrl/senior-accounting-officer/registration"
+  val featureTogglePageUrl: String           = s"$registrationPageUrl/test-only/feature-toggle"
   val stubEnrolmentPageUrl: String           = s"$registrationPageUrl/test-only/stub-enrolment"
   val registrationCompletePageUrl: String    = s"$registrationPageUrl/registration-complete"
   val businessMatchUrl: String               = s"$registrationPageUrl/business-match"

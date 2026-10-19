@@ -26,7 +26,7 @@ trait RegistrationSubmission {
   def registrationSubmission(): Unit =
     setup("submit-registration", "Registration: Submit") withActions (
       getPage("Registration", registrationPageUrl),
-      postPage("Registration", registrationPageUrl, registrationCompletePageUrl)
+      postPageWithQueryRedirect("Registration", registrationPageUrl, s"$registrationPageUrl/registration/registering")
 
       // TODO Re-enable once successful registration creates an active
       // HMRC-DSAO-ORG enrolment in staging.
