@@ -95,7 +95,7 @@ object Requests extends ServicesConfiguration {
     http("Post Task List Page")
       .post { session =>
         val redirectUrl = session(redirectUrlKey).as[String]
-        val reference = java.net.URI
+        val reference   = java.net.URI
           .create(redirectUrl)
           .getRawQuery
           .split("&")
@@ -171,4 +171,54 @@ object Requests extends ServicesConfiguration {
           .transform(removeQueryParametersFromUrl)
           .is(extractRelativeUrl(nextPage))
       )
+
+  def pollSubmissionStatus(): HttpRequestBuilder =
+    http("Poll Certificate Submission")
+      .get(session => redirectUrlFromSession(session))
+      .disableFollowRedirect
+      .check(status.in(200, 303))
+      .check(status.saveAs("submissionPollStatus"))
+      .check(
+        header(HttpHeaderNames.Location).optional
+          .saveAs("submissionPollRedirect")
+      )
+
+  def waitForSubmissionCompletion(nextPage: String): List[ActionBuilder] = {
+    val initialise = exec { session =>
+      session
+        .remove("submissionPollStatus")
+        .remove("submissionPollRedirect")
+    }
+
+    val poll = asLongAsDuring(
+      session => session("submissionPollStatus").asOption[Int].getOrElse(200) != 303,
+      30.seconds
+    ) {
+      exec(pollSubmissionStatus())
+        .pause(1.second)
+    }
+
+    val validate = exec { session =>
+      val completed =
+        session("submissionPollStatus").asOption[Int].contains(303)
+
+      val correctRedirect =
+        session("submissionPollRedirect")
+          .asOption[String]
+          .exists(location =>
+            removeQueryParametersFromUrl(location) == extractRelativeUrl(nextPage)
+          )
+
+      if (completed && correctRedirect) {
+        session.set(
+          redirectUrlKey,
+          session("submissionPollRedirect").as[String]
+        )
+      } else {
+        session.markAsFailed
+      }
+    }
+
+    initialise.actionBuilders ++ poll.actionBuilders ++ validate.actionBuilders
+  }
 }

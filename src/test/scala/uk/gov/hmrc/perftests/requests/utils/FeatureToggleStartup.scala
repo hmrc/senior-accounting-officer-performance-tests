@@ -116,8 +116,10 @@ trait FeatureToggleStartup {
         s"Feature toggle POST failed: ${response.statusCode()}"
       )
 
+      val verificationPage = getPage()
+
       require(
-        checkedInputs(getPage()).exists(_._1 == toggleName),
+        checkedInputs(verificationPage).exists(_._1 == toggleName),
         s"Feature toggle '$toggleName' was not enabled"
       )
 
