@@ -45,7 +45,8 @@ trait CertificateSubmission {
           "Check Your Answers",
           certificateCheckYourAnswers,
           certificateSubmitting,
-          Map("certificateSubmissionToken" -> "#{certificateSubmissionToken}")
+          Map("certificateSubmissionToken" -> "#{certificateSubmissionToken}"),
+          alternativeNextPage = Some(certificateTaskListComplete)
         )
       ) ++
         waitForSubmissionCompletion(certificateTaskListComplete) ++
