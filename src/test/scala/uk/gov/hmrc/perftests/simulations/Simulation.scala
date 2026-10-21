@@ -22,6 +22,8 @@ import uk.gov.hmrc.perftests.requests.auth.AuthSetup
 import uk.gov.hmrc.perftests.requests.registration.*
 import uk.gov.hmrc.perftests.requests.submission.certificate.*
 import uk.gov.hmrc.perftests.requests.submission.notification.*
+import uk.gov.hmrc.perftests.requests.utils.*
+import uk.gov.hmrc.perftests.requests.utils.RequestSupport.registrationPageUrl
 
 class Simulation
     extends PerformanceTestRunner
@@ -31,12 +33,19 @@ class Simulation
     with CertificateSetup
     with CertificateSubmission
     with CertificateUpload
+    with FeatureToggleStartup      
     with NotificationSaoDetails
     with NotificationSetup
     with NotificationSubmission
     with NotificationUpload
     with RegistrationContactDetails
     with RegistrationSubmission {
+
+  before {
+    ensureFaultToleranceEnabled(
+      s"$registrationPageUrl/test-only/feature-toggle"
+    )
+  }
 
   createAuthorityRecord()
   createEnrolledAuthorityRecord()
