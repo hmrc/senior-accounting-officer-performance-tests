@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.perftests.requests.submission.certificate
 
+import io.gatling.core.action.builder.ActionBuilder
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
@@ -24,19 +25,23 @@ import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
 trait CertificateUpload {
   self: PerformanceTestRunner =>
 
-  def certificateUpload(): Unit =
-    setup("certificate-upload", "Certificate: Upload") withActions (
-      getPage("Home", certificateHome2),
+  def certificateUpload(): Unit = {
+    val actions: List[ActionBuilder] =
+      List(
+        getPage("Home", certificateHome2),
+        getUploadPage(certificateUploadFile),
+        uploadFile
+      ) ++
+        waitForUploadCompletion(certificateReviewQualified) ++
+        List(
+          getPage("Review Qualified", certificateReviewQualified),
+          postPage("Review Qualified", certificateReviewQualified, certificateReviewUnqualified),
 
-      getUploadPage(certificateUploadFile),
-      uploadFile,
-      pause(10),
-      followUploadSuccessRedirect(certificateReviewQualified),
+          getPage("Review Unqualified", certificateReviewUnqualified),
+          postPage("Review Unqualified", certificateReviewUnqualified, certificateHome3)
+        )
 
-      getPage("Review Qualified", certificateReviewQualified),
-      postPage("Review Qualified", certificateReviewQualified, certificateReviewUnqualified),
-
-      getPage("Review Unqualified", certificateReviewUnqualified),
-      postPage("Review Unqualified", certificateReviewUnqualified, certificateHome3)
-    )
+    setup("certificate-upload", "Certificate: Upload")
+      .withActions(actions *)
+  }
 }

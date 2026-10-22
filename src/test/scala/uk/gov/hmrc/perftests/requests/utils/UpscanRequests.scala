@@ -17,10 +17,13 @@
 package uk.gov.hmrc.perftests.requests.utils
 
 import io.gatling.core.Predef.*
+import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.UpscanSupport.*
+
+import scala.concurrent.duration.*
 
 object UpscanRequests {
 
@@ -56,6 +59,50 @@ object UpscanRequests {
     http("Get Upload Success Page")
       .get(session => successActionRedirectUrlFromSession(session))
       .check(status.is(200))
+
+  def checkUploadProcessingStatus(url: String): HttpRequestBuilder =
+    http("Poll Upload Success")
+      .get(session => successActionRedirectUrlFromSession(session))
+      .disableFollowRedirect
+      .check(status.in(200, 303))
+      .check(status.saveAs("uploadPollStatus"))
+      .check(
+        header(HttpHeaderNames.Location)
+          .transform(extractRelativeUrl)
+          .optional
+          .saveAs("uploadPollRedirect")
+      )
+
+  def waitForUploadCompletion(url: String): List[ActionBuilder] = {
+    val initialise = exec { session =>
+      session
+        .remove("uploadPollStatus")
+        .remove("uploadPollRedirect")
+    }
+
+    val poll = asLongAsDuring(
+      session => session("uploadPollStatus").asOption[Int].getOrElse(200) != 303,
+      30.seconds
+    ) {
+      exec(checkUploadProcessingStatus(url))
+        .pause(1.second)
+    }
+
+    val validate = exec { session =>
+      val completed =
+        session("uploadPollStatus").asOption[Int].contains(303)
+
+      val correctRedirect =
+        session("uploadPollRedirect")
+          .asOption[String]
+          .contains(extractRelativeUrl(url))
+
+      if (completed && correctRedirect) session
+      else session.markAsFailed
+    }
+
+    initialise.actionBuilders ++ poll.actionBuilders ++ validate.actionBuilders
+  }
 
   def followUploadSuccessRedirect(url: String): HttpRequestBuilder =
     http("Poll Upload Success")

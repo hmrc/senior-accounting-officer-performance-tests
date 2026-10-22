@@ -95,7 +95,7 @@ object Requests extends ServicesConfiguration {
     http("Post Task List Page")
       .post { session =>
         val redirectUrl = session(redirectUrlKey).as[String]
-        val reference = java.net.URI
+        val reference   = java.net.URI
           .create(redirectUrl)
           .getRawQuery
           .split("&")
@@ -155,8 +155,13 @@ object Requests extends ServicesConfiguration {
       name: String,
       currentPage: String,
       nextPage: String,
-      formParams: Map[String, String] = Map.empty
-  ): HttpRequestBuilder =
+      formParams: Map[String, String] = Map.empty,
+      alternativeNextPage: Option[String] = None
+  ): HttpRequestBuilder = {
+    val expectedRedirects =
+      Set(extractRelativeUrl(nextPage)) ++
+        alternativeNextPage.map(extractRelativeUrl)
+
     http(s"Post $name Page")
       .post(currentPage)
       .formParamMap(formParams + (csrfTokenKey -> "#{csrfToken}"))
@@ -169,6 +174,66 @@ object Requests extends ServicesConfiguration {
       .check(
         header(HttpHeaderNames.Location)
           .transform(removeQueryParametersFromUrl)
-          .is(extractRelativeUrl(nextPage))
+          .in(expectedRedirects.toSeq *)
       )
+  }
+
+  def pollSubmissionStatus(): HttpRequestBuilder =
+    http("Poll Certificate Submission")
+      .get(session => redirectUrlFromSession(session))
+      .disableFollowRedirect
+      .check(status.in(200, 303))
+      .check(status.saveAs("submissionPollStatus"))
+      .check(
+        header(HttpHeaderNames.Location).optional
+          .saveAs("submissionPollRedirect")
+      )
+
+  def waitForSubmissionCompletion(nextPage: String): List[ActionBuilder] = {
+    val initialise = exec { session =>
+      session
+        .remove("submissionPollStatus")
+        .remove("submissionPollRedirect")
+    }
+
+    val poll = doIf { session =>
+      removeQueryParametersFromUrl(
+        session(redirectUrlKey).as[String]
+      ) != extractRelativeUrl(nextPage)
+    } {
+      asLongAsDuring(
+        session => session("submissionPollStatus").asOption[Int].getOrElse(200) != 303,
+        30.seconds
+      ) {
+        exec(pollSubmissionStatus())
+          .pause(1.second)
+      }
+    }
+
+    val validate = exec { session =>
+      val initialRedirect = session(redirectUrlKey).as[String]
+
+      if (removeQueryParametersFromUrl(initialRedirect) == extractRelativeUrl(nextPage)) {
+        session
+      } else {
+        val completed =
+          session("submissionPollStatus").asOption[Int].contains(303)
+
+        val redirect =
+          session("submissionPollRedirect").asOption[String]
+
+        redirect match {
+          case Some(location)
+            if completed &&
+              removeQueryParametersFromUrl(location) == extractRelativeUrl(nextPage) =>
+            session.set(redirectUrlKey, location)
+
+          case _ =>
+            session.markAsFailed
+        }
+      }
+    }
+
+    initialise.actionBuilders ++ poll.actionBuilders ++ validate.actionBuilders
+  }
 }

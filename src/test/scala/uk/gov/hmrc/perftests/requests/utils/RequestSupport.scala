@@ -67,6 +67,7 @@ object RequestSupport extends ServicesConfiguration {
   val certificateWhoIsSubmitting: String   = s"$submission/certificate-who-is-submitting"
   val certificateConfirmSao: String        = s"$certificate/submit-certificate-confirm-sao"
   val certificateCheckYourAnswers: String  = s"$submission/certificateCheckYourAnswers"
+  val certificateSubmitting: String        = s"$certificate/submitting"
   val certificateTaskListComplete: String  = s"$certificate/task-list/complete"
   val certificateTaskList: String          = s"$certificate/task-list"
   val certificateConfirmation: String      = s"$submission/certificate-confirmation"

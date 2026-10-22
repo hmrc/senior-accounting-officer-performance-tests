@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.perftests.requests.submission.certificate
 
+import io.gatling.core.action.builder.ActionBuilder
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
@@ -25,30 +26,37 @@ import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
 trait CertificateSubmission {
   self: PerformanceTestRunner =>
 
-  def certificateSubmission(): Unit =
-    setup("certificate-submission", "Certificate: Submission") withActions (
-      getPage("Home", certificateHome3),
+  def certificateSubmission(): Unit = {
+    val actions: List[ActionBuilder] =
+      List(
+        getPage("Home", certificateHome3),
 
-      getPage("Additional Information", certificateAdditionalInfo),
-      postPage("Additional Information", certificateAdditionalInfo, certificateWhoIsSubmitting, textInput),
+        getPage("Additional Information", certificateAdditionalInfo),
+        postPage("Additional Information", certificateAdditionalInfo, certificateWhoIsSubmitting, textInput),
 
-      getPage("Who Is Submitting", certificateWhoIsSubmitting),
-      postPage("Who Is Submitting", certificateWhoIsSubmitting, certificateConfirmSao, radioButtonSao),
+        getPage("Who Is Submitting", certificateWhoIsSubmitting),
+        postPage("Who Is Submitting", certificateWhoIsSubmitting, certificateConfirmSao, radioButtonSao),
 
-      getPage("Declaration", certificateConfirmSao),
-      postPage("Declaration", certificateConfirmSao, certificateCheckYourAnswers, textInput),
+        getPage("Declaration", certificateConfirmSao),
+        postPage("Declaration", certificateConfirmSao, certificateCheckYourAnswers, textInput),
 
-      getPage("Check Your Answers", certificateCheckYourAnswers, saveSubmissionToken = true),
-      postPageWithQueryRedirect(
-        "Check Your Answers",
-        certificateCheckYourAnswers,
-        certificateTaskListComplete,
-        Map("certificateSubmissionToken" -> "#{certificateSubmissionToken}")
-      ),
+        getPage("Check Your Answers", certificateCheckYourAnswers, saveSubmissionToken = true),
+        postPageWithQueryRedirect(
+          "Check Your Answers",
+          certificateCheckYourAnswers,
+          certificateSubmitting,
+          Map("certificateSubmissionToken" -> "#{certificateSubmissionToken}"),
+          alternativeNextPage = Some(certificateTaskListComplete)
+        )
+      ) ++
+        waitForSubmissionCompletion(certificateTaskListComplete) ++
+        List(
+          getPageFromRedirect("Task List Complete", baseSubmissionUrl),
+          postTaskList,
+          getPageFromRedirect("Certificate Confirmation", baseSubmissionUrl)
+        )
 
-      getPageFromRedirect("Task List Complete", baseSubmissionUrl),
-      postTaskList,
-
-      getPageFromRedirect("Certificate Confirmation", baseSubmissionUrl)
-    )
+    setup("certificate-submission", "Certificate: Submission")
+      .withActions(actions *)
+  }
 }

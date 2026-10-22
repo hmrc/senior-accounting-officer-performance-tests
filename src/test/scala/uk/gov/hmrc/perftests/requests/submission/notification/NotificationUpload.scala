@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.perftests.requests.submission.notification
 
+import io.gatling.core.action.builder.ActionBuilder
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
 import uk.gov.hmrc.perftests.requests.utils.Requests.*
@@ -24,17 +25,21 @@ import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
 trait NotificationUpload {
   self: PerformanceTestRunner =>
 
-  def notificationUpload(): Unit =
-    setup("notification-upload", "Notification: Upload") withActions (
-      getPage("Home", notificationHome),
+  def notificationUpload(): Unit = {
+    val actions: List[ActionBuilder] =
+      List(
+        getPage("Home", notificationHome),
+        getUploadPage(notificationUploadFile),
+        uploadFile,
+        getUploadSuccessPage
+      ) ++
+        waitForUploadCompletion(notificationUploadTable) ++
+        List(
+          getPage("Upload Table", notificationUploadTable),
+          postPage("Upload Table", notificationUploadTable, notificationHome)
+        )
 
-      getUploadPage(notificationUploadFile),
-      uploadFile,
-      getUploadSuccessPage,
-      pause(1),
-      followUploadSuccessRedirect(notificationUploadTable),
-
-      getPage("Upload Table", notificationUploadTable),
-      postPage("Upload Table", notificationUploadTable, notificationHome)
-    )
+    setup("notification-upload", "Notification: Upload")
+      .withActions(actions *)
+  }
 }
