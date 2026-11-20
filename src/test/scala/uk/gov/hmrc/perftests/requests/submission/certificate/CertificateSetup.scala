@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.submission.certificate
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait CertificateSetup {
   self: PerformanceTestRunner =>
@@ -28,9 +28,9 @@ trait CertificateSetup {
     setup("certificate-setup", "Certificate: Setup") withActions (
       getPage("SAO Home", saoLandingPage),
 
-      getPage("Submission Type", submissionType, saveToken = true),
-      postPage("Submission Type", submissionType, certificateHome1, radioButtonCertificate),
+      getPage("Submission Type", submission, saveToken = true),
+      postPage("Submission Type", submission, certificateHome, radioButtonCertificate),
 
-      getPage("Home", certificateHome1)
+      getPage("Home", certificateHome)
     )
 }

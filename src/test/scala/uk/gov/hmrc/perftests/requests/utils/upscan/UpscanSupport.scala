@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.utils
+package uk.gov.hmrc.perftests.requests.utils.upscan
 
 import io.gatling.core.Predef.*
 import io.gatling.core.check.CheckBuilder

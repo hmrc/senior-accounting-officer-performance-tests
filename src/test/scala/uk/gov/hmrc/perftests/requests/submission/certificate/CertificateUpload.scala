@@ -18,19 +18,20 @@ package uk.gov.hmrc.perftests.requests.submission.certificate
 
 import io.gatling.core.action.builder.ActionBuilder
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
-import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
+import uk.gov.hmrc.perftests.requests.utils.feeder.FeederDefs
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.upscan.UpscanRequests.*
 
-trait CertificateUpload {
+trait CertificateUpload extends FeederDefs {
   self: PerformanceTestRunner =>
 
   def certificateUpload(): Unit = {
     val actions: List[ActionBuilder] =
       List(
-        getPage("Home", certificateHome2),
+        getPage("Home", certificateHome),
         getUploadPage(certificateUploadFile),
-        uploadFile
+        uploadFile(fileName)
       ) ++
         waitForUploadCompletion(certificateReviewQualified) ++
         List(
@@ -38,7 +39,7 @@ trait CertificateUpload {
           postPage("Review Qualified", certificateReviewQualified, certificateReviewUnqualified),
 
           getPage("Review Unqualified", certificateReviewUnqualified),
-          postPage("Review Unqualified", certificateReviewUnqualified, certificateHome3)
+          postPage("Review Unqualified", certificateReviewUnqualified, certificateHome)
         )
 
     setup("certificate-upload", "Certificate: Upload")

@@ -17,9 +17,10 @@
 package uk.gov.hmrc.perftests.requests.auth
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.AuthRequests.*
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.AuthRequests.*
+import uk.gov.hmrc.perftests.requests.utils.requests.RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait AuthSetup {
   self: PerformanceTestRunner =>
@@ -31,7 +32,7 @@ trait AuthSetup {
         createAuthority(authorityRedirectUrl)
       ) ++
         (if (requiresStubEnrolment)
-           Seq(followRedirect("Stub Enrolment", registrationPageUrl))
+           Seq(followRedirect("Stub Enrolment", registrationUrl))
          else
            Seq.empty)
 

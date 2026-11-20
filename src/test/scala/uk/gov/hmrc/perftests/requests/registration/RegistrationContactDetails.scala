@@ -17,10 +17,10 @@
 package uk.gov.hmrc.perftests.requests.registration
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.RegistrationMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait RegistrationContactDetails {
 
@@ -28,25 +28,25 @@ trait RegistrationContactDetails {
 
   def registrationContactDetails(): Unit =
     setup("registration-contact-details", "Registration: Contact Details") withActions (
-      getPage("Contact Details", contactDetailsPageUrl, saveToken = true),
-      postPage("Contact Details", contactDetailsPageUrl, addFirstContactNameUrl),
+      getPage("Contact Details", registrationContactDetailsUrl, saveToken = true),
+      postPage("Contact Details", registrationContactDetailsUrl, registrationFirstContactNameUrl),
 
-      getPage("First Contact Name", addFirstContactNameUrl),
-      postPage("First Contact Name", addFirstContactNameUrl, addFirstContactEmailUrl, textInputTestUser1),
+      getPage("First Contact Name", registrationFirstContactNameUrl),
+      postPage("First Contact Name",  registrationFirstContactNamePostUrl, registrationFirstContactEmailUrl, inputNameCDFirst),
 
-      getPage("First Contact Email", addFirstContactEmailUrl),
-      postPage("First Contact Email", addFirstContactEmailUrl, addAnotherContactPageUrl, emailAddressTestUser1),
+      getPage("First Contact Email", registrationFirstContactEmailUrl),
+      postPage("First Contact Email", registrationFirstContactEmailPostUrl, registrationAnotherContactPageUrl, inputEmailCDFirst),
 
-      getPage("Add Another Contact", addAnotherContactPageUrl),
-      postPage("Add Another Contact", addAnotherContactPageUrl, addSecondContactNameUrl, radioButtonYes),
+      getPage("Add Another Contact", registrationAnotherContactPageUrl),
+      postPage("Add Another Contact", registrationAnotherContactPageUrl, registrationSecondContactNameUrl, radioButtonYes),
 
-      getPage("Second Contact Name", addSecondContactNameUrl),
-      postPage("Second Contact Name", addSecondContactNameUrl, addSecondContactEmailUrl, textInputTestUser2),
+      getPage("Second Contact Name", registrationSecondContactNameUrl),
+      postPage("Second Contact Name", registrationSecondContactNamePostUrl, registrationSecondContactEmailUrl, inputNameCDSecond),
 
-      getPage("Second Contact Email", addSecondContactEmailUrl),
-      postPage("Second Contact Email", addSecondContactEmailUrl, checkYourAnswersUrl, emailAddressTestUser2),
+      getPage("Second Contact Email", registrationSecondContactEmailUrl),
+      postPage("Second Contact Email", registrationSecondContactEmailPostUrl, registrationCheckYourAnswersUrl, inputEmailCDSecond),
 
-      getPage("Check Your Answers", checkYourAnswersUrl),
-      postPage("Check Your Answers", checkYourAnswersUrl, registrationPageUrl, contactDetails)
+      getPage("Check Your Answers", registrationCheckYourAnswersUrl),
+      postPage("Check Your Answers", registrationCheckYourAnswersUrl, registrationUrl, contactDetails)
     )
 }

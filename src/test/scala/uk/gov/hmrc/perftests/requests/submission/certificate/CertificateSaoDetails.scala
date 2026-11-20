@@ -17,20 +17,19 @@
 package uk.gov.hmrc.perftests.requests.submission.certificate
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait CertificateSaoDetails {
   self: PerformanceTestRunner =>
 
   def certificateSaoDetails(): Unit =
-    setup("certificate-sao-details", "Certificate: Sao Details") withActions(
-
+    setup("certificate-sao-details", "Certificate: Sao Details") withActions (
       getPage("SAO Name", certificateSaoFullName),
-      postPage("SAO Name", certificateSaoFullName, certificateSaoEmail, textInput),
+      postPage("SAO Name", certificateSaoFullName, certificateSaoEmail, inputNameSao),
 
       getPage("SAO Email", certificateSaoEmail),
-      postPage("SAO Name", certificateSaoEmail, certificateHome2, emailAddress)
+      postPage("SAO Name", certificateSaoEmail, certificateHome, inputEmailSAO)
     )
 }

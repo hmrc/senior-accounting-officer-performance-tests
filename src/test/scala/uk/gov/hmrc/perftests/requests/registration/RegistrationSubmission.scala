@@ -17,16 +17,16 @@
 package uk.gov.hmrc.perftests.requests.registration
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait RegistrationSubmission {
   self: PerformanceTestRunner =>
 
   def registrationSubmission(): Unit =
     setup("submit-registration", "Registration: Submit") withActions (
-      getPage("Registration", registrationPageUrl),
-      postPageWithQueryRedirect("Registration", registrationPageUrl, s"$registrationPageUrl/registration/registering")
+      getPage("Registration", registrationUrl),
+      postPageWithQueryRedirect("Registration", registrationUrl, registrationCompletePageUrl)
 
       // TODO Re-enable once successful registration creates an active
       // HMRC-DSAO-ORG enrolment in staging.

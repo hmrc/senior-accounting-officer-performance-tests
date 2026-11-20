@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.utils
+package uk.gov.hmrc.perftests.requests.utils.requests
 
 import io.gatling.core.Predef.*
 import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.support.adt.*
 
 object AuthRequests {

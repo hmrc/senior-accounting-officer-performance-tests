@@ -18,11 +18,12 @@ package uk.gov.hmrc.perftests.requests.submission.notification
 
 import io.gatling.core.action.builder.ActionBuilder
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
-import uk.gov.hmrc.perftests.requests.utils.UpscanRequests.*
+import uk.gov.hmrc.perftests.requests.utils.feeder.FeederDefs
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.upscan.UpscanRequests.*
 
-trait NotificationUpload {
+trait NotificationUpload extends FeederDefs {
   self: PerformanceTestRunner =>
 
   def notificationUpload(): Unit = {
@@ -30,7 +31,7 @@ trait NotificationUpload {
       List(
         getPage("Home", notificationHome),
         getUploadPage(notificationUploadFile),
-        uploadFile,
+        uploadFile(fileName),
         getUploadSuccessPage
       ) ++
         waitForUploadCompletion(notificationUploadTable) ++

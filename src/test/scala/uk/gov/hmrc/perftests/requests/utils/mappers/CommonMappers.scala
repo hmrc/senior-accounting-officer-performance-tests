@@ -16,24 +16,29 @@
 
 package uk.gov.hmrc.perftests.requests.utils.mappers
 
-object CommonMappers {
+import uk.gov.hmrc.perftests.requests.utils.feeder.FeederDefs
 
-  val textInput: Map[String, String]             = Map("value" -> "AbCdEfGhI")
-  val textInputTestUser1: Map[String, String]    = Map("value" -> "Test User 1")
-  val textInputTestUser2: Map[String, String]    = Map("value" -> "Test User 2")
-  val numberInput: Map[String, String]           = Map("value" -> "456785643")
-  val emailAddress: Map[String, String]          = Map("value" -> "test@example.com")
-  val emailAddressTestUser1: Map[String, String] = Map("value" -> "test1@example.com")
-  val emailAddressTestUser2: Map[String, String] = Map("value" -> "test2@example.com")
+object CommonMappers extends FeederDefs {
 
-  val radioButtonYes: Map[String, String] = Map("value" -> "yes")
-  val radioButtonNo: Map[String, String]  = Map("value" -> "no")
+  def mapValue(input: String, idName: String = "value"): Map[String, String] = Map(idName -> input)
 
-  val radioButtonTrue: Map[String, String]  = Map("value" -> "true")
-  val radioButtonFalse: Map[String, String] = Map("value" -> "false")
+  def inputNameSao: Map[String, String]               = mapValue(nameSao)
+  def inputNameSaoPrevious: Map[String, String]       = mapValue(nameSaoPrevious)
+  def inputNameCDFirst: Map[String, String]           = mapValue(nameCDFirst)
+  def inputNameCDSecond: Map[String, String]          = mapValue(nameCDSecond)
+  def inputEmailSAO: Map[String, String]              = mapValue(emailSAO)
+  def inputEmailCDFirst: Map[String, String]          = mapValue(emailCDFirst)
+  def inputEmailCDSecond: Map[String, String]         = mapValue(emailCDSecond)
+  def inputAdditionalInformation: Map[String, String] = mapValue(additionalInformation)
 
-  val radioButtonNotification: Map[String, String] = Map("value" -> "notification")
-  val radioButtonCertificate: Map[String, String]  = Map("value" -> "certificate")
+  val radioButtonYes: Map[String, String] = mapValue("yes")
+  val radioButtonNo: Map[String, String]  = mapValue("no")
+
+  val radioButtonTrue: Map[String, String]  = mapValue("true")
+  val radioButtonFalse: Map[String, String] = mapValue("false")
+
+  val radioButtonNotification: Map[String, String] = mapValue("notification")
+  val radioButtonCertificate: Map[String, String]  = mapValue("certificate")
 
   def dateInput(day: String, month: String, year: String): Map[String, String] =
     Map(
