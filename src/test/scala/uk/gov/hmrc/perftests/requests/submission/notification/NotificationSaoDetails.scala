@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.submission.notification
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait NotificationSaoDetails {
   self: PerformanceTestRunner =>
@@ -27,7 +27,7 @@ trait NotificationSaoDetails {
   def notificationSaoDetails(): Unit =
     setup("notification-sao-details", "Notification: Sao Details") withActions (
       getPage("Current SAO Name", notificationMoreCurrentSaoName),
-      postPage("Current SAO Name", notificationMoreCurrentSaoName, notificationMoreCurrentSaoStartDate, textInput),
+      postPage("Current SAO Name", notificationMoreCurrentSaoName, notificationMoreCurrentSaoStartDate, inputNameSao),
 
       getPage("Current SAO Start Date", notificationMoreCurrentSaoStartDate),
       postPage(
@@ -38,7 +38,12 @@ trait NotificationSaoDetails {
       ),
 
       getPage("Notification: Previous SAO Name", notificationMorePreviousSaoName),
-      postPage("Previous SAO Name", notificationMorePreviousSaoName, notificationMorePreviousSaoStartDate, textInput),
+      postPage(
+        "Previous SAO Name",
+        notificationMorePreviousSaoName,
+        notificationMorePreviousSaoStartDate,
+        inputNameSaoPrevious
+      ),
 
       getPage("Previous SAO Start Date", notificationMorePreviousSaoStartDate),
       postPage(
@@ -52,11 +57,11 @@ trait NotificationSaoDetails {
       postPage(
         "Previous SAO End Date",
         notificationMorePreviousSaoEndDate,
-        notificationMoreAllAdded,
+        notificationMoreAddOfficer,
         previousSaoEndDate
       ),
 
-      getPage("All SAOs Added", notificationMoreAllAdded),
-      postPage("All SAOs Added", notificationMoreAllAdded, notificationHome, radioButtonTrue)
+      getPage("All SAOs Added", notificationMoreAddOfficer),
+      postPage("All SAOs Added", notificationMoreAddOfficer, notificationHome, radioButtonTrue)
     )
 }

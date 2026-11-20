@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.submission.notification
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait NotificationSetup {
   self: PerformanceTestRunner =>
@@ -28,8 +28,8 @@ trait NotificationSetup {
     setup("notification-setup", "Notification: Setup") withActions (
       getPage("SAO Home", saoLandingPage),
 
-      getPage("Submission Type", submissionType, saveToken = true),
-      postPage("Submission Type", submissionType, notificationHome, radioButtonNotification),
+      getPage("Submission Type", submission, saveToken = true),
+      postPage("Submission Type", submission, notificationHome, radioButtonNotification),
 
       getPage("Home", notificationHome),
 

@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.registration
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.GrsRequests.*
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.GrsRequests.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait GrsSetup {
 
@@ -27,11 +27,11 @@ trait GrsSetup {
 
   def grsSetup(): Unit =
     setup("grs-setup", "Registration: GRS Setup") withActions (
-      getPage("Registration", registrationPageUrl),
-      getGrsRedirect("Business Match", businessMatchUrl),
+      getPage("Registration", registrationUrl),
+      getGrsRedirect("Business Match", registrationBusinessMatchUrl),
       getGrsPage("GRS Business Match"),
       postGrsPage("GRS Business Match"),
-      followRedirect("Business Match Result", registrationPageUrl),
+      followRedirect("Business Match Result", registrationUrl),
       getPageFromRedirect("Complete", baseRegistrationUrl)
     )
 }

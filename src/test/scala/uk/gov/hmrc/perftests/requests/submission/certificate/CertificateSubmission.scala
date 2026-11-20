@@ -18,10 +18,10 @@ package uk.gov.hmrc.perftests.requests.submission.certificate
 
 import io.gatling.core.action.builder.ActionBuilder
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CertificateMappers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait CertificateSubmission {
   self: PerformanceTestRunner =>
@@ -29,16 +29,21 @@ trait CertificateSubmission {
   def certificateSubmission(): Unit = {
     val actions: List[ActionBuilder] =
       List(
-        getPage("Home", certificateHome3),
+        getPage("Home", certificateHome),
 
         getPage("Additional Information", certificateAdditionalInfo),
-        postPage("Additional Information", certificateAdditionalInfo, certificateWhoIsSubmitting, textInput),
+        postPage(
+          "Additional Information",
+          certificateAdditionalInfo,
+          certificateWhoIsSubmitting,
+          inputAdditionalInformation
+        ),
 
         getPage("Who Is Submitting", certificateWhoIsSubmitting),
         postPage("Who Is Submitting", certificateWhoIsSubmitting, certificateConfirmSao, radioButtonSao),
 
         getPage("Declaration", certificateConfirmSao),
-        postPage("Declaration", certificateConfirmSao, certificateCheckYourAnswers, textInput),
+        postPage("Declaration", certificateConfirmSao, certificateCheckYourAnswers, inputNameSao),
 
         getPage("Check Your Answers", certificateCheckYourAnswers, saveSubmissionToken = true),
         postPageWithQueryRedirect(
@@ -46,10 +51,10 @@ trait CertificateSubmission {
           certificateCheckYourAnswers,
           certificateSubmitting,
           Map("certificateSubmissionToken" -> "#{certificateSubmissionToken}"),
-          alternativeNextPage = Some(certificateTaskListComplete)
+          alternativeNextPage = Some(certificateHome)
         )
       ) ++
-        waitForSubmissionCompletion(certificateTaskListComplete) ++
+        waitForSubmissionCompletion(certificateHome) ++
         List(
           getPageFromRedirect("Task List Complete", baseSubmissionUrl),
           postTaskList,

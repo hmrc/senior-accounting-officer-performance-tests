@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.utils
+package uk.gov.hmrc.perftests.requests.utils.requests
 
 import io.gatling.core.Predef.*
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.RequestSupport.*
 
 import scala.concurrent.duration.*
 
@@ -103,7 +104,7 @@ object Requests extends ServicesConfiguration {
           .map(_.stripPrefix("certificateReference="))
           .getOrElse(throw new IllegalStateException("Missing certificateReference"))
 
-        s"$certificateTaskList?certificateReference=$reference"
+        s"$certificateHome?certificateReference=$reference"
       }
       .formParamMap(Map(csrfTokenKey -> "#{csrfToken}"))
       .disableFollowRedirect
@@ -138,6 +139,30 @@ object Requests extends ServicesConfiguration {
       .post(currentPage)
       .formParamMap(formParams + (csrfTokenKey -> "#{csrfToken}"))
       .disableFollowRedirect
+      .check(status.is(303))
+      .check(
+        header(HttpHeaderNames.Location)
+          .is(extractRelativeUrl(nextPage))
+      )
+
+  def debugPostPage(
+      name: String,
+      currentPage: String,
+      nextPage: String,
+      formParams: Map[String, String]
+  ): HttpRequestBuilder =
+    http(s"Post $name Page")
+      .post(currentPage)
+      .formParamMap(formParams + (csrfTokenKey -> "#{csrfToken}"))
+      .disableFollowRedirect
+      .check(
+        bodyString.transform { body =>
+          println("===== DEBUG RESPONSE =====")
+          println(body)
+          println("==========================")
+          body
+        }.exists
+      )
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location)
@@ -224,8 +249,8 @@ object Requests extends ServicesConfiguration {
 
         redirect match {
           case Some(location)
-            if completed &&
-              removeQueryParametersFromUrl(location) == extractRelativeUrl(nextPage) =>
+              if completed &&
+                removeQueryParametersFromUrl(location) == extractRelativeUrl(nextPage) =>
             session.set(redirectUrlKey, location)
 
           case _ =>

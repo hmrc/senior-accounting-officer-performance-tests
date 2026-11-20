@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.perftests.requests.utils.mappers
 
+import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.mapValue
+
 object CertificateMappers {
 
-  val radioButtonSao: Map[String, String] = Map("value" -> "sao")
-  val radioButtonStandIn: Map[String, String]  = Map("value" -> "standIn")
+  val radioButtonSao: Map[String, String]     = mapValue("sao")
+  val radioButtonStandIn: Map[String, String] = mapValue("standIn")
 
 }

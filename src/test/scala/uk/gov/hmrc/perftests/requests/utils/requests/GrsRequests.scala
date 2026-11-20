@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.utils
+package uk.gov.hmrc.perftests.requests.utils.requests
 
 import io.gatling.core.Predef.*
 import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
-
-import RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.RequestSupport.*
 
 object GrsRequests extends ServicesConfiguration {
 
@@ -78,6 +78,6 @@ object GrsRequests extends ServicesConfiguration {
         header(HttpHeaderNames.Location).saveAs(redirectUrlKey),
         header(HttpHeaderNames.Location)
           .transform(extractRelativeUrl)
-          .is(session => businessMatchWithJourneyIdUrl(session))
+          .is(session => extractRelativeUrl(businessMatchWithJourneyIdUrl(session)))
       )
 }

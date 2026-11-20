@@ -17,9 +17,9 @@
 package uk.gov.hmrc.perftests.requests.submission.notification
 
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.Requests.*
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
 import uk.gov.hmrc.perftests.requests.utils.mappers.CommonMappers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.Requests.*
 
 trait NotificationSubmission {
   self: PerformanceTestRunner =>
@@ -29,12 +29,14 @@ trait NotificationSubmission {
       getPage("Home", notificationHome),
 
       getPage("Additional Information", notificationAdditionalInfo),
-      postPage("Additional Information", notificationAdditionalInfo, notificationConfirm, textInput),
+      postPage("Additional Information", notificationAdditionalInfo, notificationConfirm, inputAdditionalInformation),
 
       getPage("Confirm", notificationConfirm),
 
       getPage("Check Your Answers", notificationCheckYourAnswers),
-      postPageWithQueryRedirect("Check Your Answers", notificationCheckYourAnswers, notificationConfirmation),
+      postPageWithQueryRedirect("Check Your Answers", notificationCheckYourAnswers, notificationComplete),
+
+      getPage("Home - Complete", notificationComplete),
 
       getPageFromRedirect("Confirmation", baseSubmissionUrl)
     )

@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.perftests.requests.utils
+package uk.gov.hmrc.perftests.requests.utils.upscan
 
 import io.gatling.core.Predef.*
 import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.Predef.*
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.requests.utils.RequestSupport.*
-import uk.gov.hmrc.perftests.requests.utils.UpscanSupport.*
+import uk.gov.hmrc.perftests.requests.utils.feeder.FeederDefs
+import uk.gov.hmrc.perftests.requests.utils.helpers.URLHelpers.*
+import uk.gov.hmrc.perftests.requests.utils.requests.RequestSupport.*
+import uk.gov.hmrc.perftests.requests.utils.upscan.UpscanSupport.*
 
 import scala.concurrent.duration.*
 
-object UpscanRequests {
+object UpscanRequests extends FeederDefs {
 
   def getUploadPage(url: String): HttpRequestBuilder =
     http("Get Upload Page")
@@ -38,12 +40,12 @@ object UpscanRequests {
       .check(saveSuccessActionRedirectUrl())
       .check(saveFormAction())
 
-  def uploadFile: HttpRequestBuilder =
+  def uploadFile(file: String): HttpRequestBuilder =
     http("Upload File")
       .post(session => formActionFromSession(session))
       .disableFollowRedirect
       .formParamSeq(session => upscanParameters.map(name => name -> session(name).as[String]))
-      .formUpload("file", "data/sao-valid.csv")
+      .formUpload("file", fileName)
       .check(status.is(303))
       .check(
         header(HttpHeaderNames.Location)
