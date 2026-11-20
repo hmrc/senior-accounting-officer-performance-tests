@@ -18,14 +18,14 @@ package uk.gov.hmrc.perftests.requests.utils.feeder
 
 trait FeederDefs {
 
-  def fileName = "#{FileName}"
-  def nameSao = "#{NameSao}"
-  def nameSaoPrevious = "#{NameSaoPrevious}"
-  def nameCDFirst = "#{NameCDFirst}"
-  def nameCDSecond = "#{NameCDSecond}"
-  def emailSAO = "#{EmailSAO}"
-  def emailCDFirst = "#{EmailCDFirst}"
-  def emailCDSecond = "#{EmailCDSecond}"
+  def fileName              = "#{FileName}"
+  def nameSao               = "#{NameSao}"
+  def nameSaoPrevious       = "#{NameSaoPrevious}"
+  def nameCDFirst           = "#{NameCDFirst}"
+  def nameCDSecond          = "#{NameCDSecond}"
+  def emailSAO              = "#{EmailSAO}"
+  def emailCDFirst          = "#{EmailCDFirst}"
+  def emailCDSecond         = "#{EmailCDSecond}"
   def additionalInformation = "#{AdditionalInformation}"
 
 }

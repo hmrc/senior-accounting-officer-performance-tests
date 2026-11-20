@@ -38,7 +38,12 @@ trait NotificationSaoDetails {
       ),
 
       getPage("Notification: Previous SAO Name", notificationMorePreviousSaoName),
-      postPage("Previous SAO Name", notificationMorePreviousSaoName, notificationMorePreviousSaoStartDate, inputNameSaoPrevious),
+      postPage(
+        "Previous SAO Name",
+        notificationMorePreviousSaoName,
+        notificationMorePreviousSaoStartDate,
+        inputNameSaoPrevious
+      ),
 
       getPage("Previous SAO Start Date", notificationMorePreviousSaoStartDate),
       postPage(

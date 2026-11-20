@@ -32,19 +32,44 @@ trait RegistrationContactDetails {
       postPage("Contact Details", registrationContactDetailsUrl, registrationFirstContactNameUrl),
 
       getPage("First Contact Name", registrationFirstContactNameUrl),
-      postPage("First Contact Name",  registrationFirstContactNamePostUrl, registrationFirstContactEmailUrl, inputNameCDFirst),
+      postPage(
+        "First Contact Name",
+        registrationFirstContactNamePostUrl,
+        registrationFirstContactEmailUrl,
+        inputNameCDFirst
+      ),
 
       getPage("First Contact Email", registrationFirstContactEmailUrl),
-      postPage("First Contact Email", registrationFirstContactEmailPostUrl, registrationAnotherContactPageUrl, inputEmailCDFirst),
+      postPage(
+        "First Contact Email",
+        registrationFirstContactEmailPostUrl,
+        registrationAnotherContactPageUrl,
+        inputEmailCDFirst
+      ),
 
       getPage("Add Another Contact", registrationAnotherContactPageUrl),
-      postPage("Add Another Contact", registrationAnotherContactPageUrl, registrationSecondContactNameUrl, radioButtonYes),
+      postPage(
+        "Add Another Contact",
+        registrationAnotherContactPageUrl,
+        registrationSecondContactNameUrl,
+        radioButtonYes
+      ),
 
       getPage("Second Contact Name", registrationSecondContactNameUrl),
-      postPage("Second Contact Name", registrationSecondContactNamePostUrl, registrationSecondContactEmailUrl, inputNameCDSecond),
+      postPage(
+        "Second Contact Name",
+        registrationSecondContactNamePostUrl,
+        registrationSecondContactEmailUrl,
+        inputNameCDSecond
+      ),
 
       getPage("Second Contact Email", registrationSecondContactEmailUrl),
-      postPage("Second Contact Email", registrationSecondContactEmailPostUrl, registrationCheckYourAnswersUrl, inputEmailCDSecond),
+      postPage(
+        "Second Contact Email",
+        registrationSecondContactEmailPostUrl,
+        registrationCheckYourAnswersUrl,
+        inputEmailCDSecond
+      ),
 
       getPage("Check Your Answers", registrationCheckYourAnswersUrl),
       postPage("Check Your Answers", registrationCheckYourAnswersUrl, registrationUrl, contactDetails)

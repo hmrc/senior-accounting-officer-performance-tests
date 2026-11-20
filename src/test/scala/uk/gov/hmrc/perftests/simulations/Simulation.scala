@@ -22,8 +22,6 @@ import uk.gov.hmrc.perftests.requests.auth.AuthSetup
 import uk.gov.hmrc.perftests.requests.registration.*
 import uk.gov.hmrc.perftests.requests.submission.certificate.*
 import uk.gov.hmrc.perftests.requests.submission.notification.*
-import uk.gov.hmrc.perftests.requests.utils.*
-
 
 class Simulation
     extends PerformanceTestRunner

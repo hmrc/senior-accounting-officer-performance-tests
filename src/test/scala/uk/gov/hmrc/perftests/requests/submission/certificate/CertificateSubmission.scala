@@ -32,7 +32,12 @@ trait CertificateSubmission {
         getPage("Home", certificateHome),
 
         getPage("Additional Information", certificateAdditionalInfo),
-        postPage("Additional Information", certificateAdditionalInfo, certificateWhoIsSubmitting, inputAdditionalInformation),
+        postPage(
+          "Additional Information",
+          certificateAdditionalInfo,
+          certificateWhoIsSubmitting,
+          inputAdditionalInformation
+        ),
 
         getPage("Who Is Submitting", certificateWhoIsSubmitting),
         postPage("Who Is Submitting", certificateWhoIsSubmitting, certificateConfirmSao, radioButtonSao),
